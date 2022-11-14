@@ -1,4 +1,3 @@
 secrets/
-venv/
 __pycache__/
 ansible.json

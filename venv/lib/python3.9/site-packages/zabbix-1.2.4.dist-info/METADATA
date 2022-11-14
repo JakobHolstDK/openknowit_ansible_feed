@@ -1,0 +1,109 @@
+Metadata-Version: 2.1
+Name: zabbix
+Version: 1.2.4
+Summary: Python module to work with zabbix.
+Home-page: https://github.com/nixargh/py-zabbix
+Author: nixargh
+Author-email: nixargh@protonmail.com
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: License :: OSI Approved :: GNU General Public License v2 (GPLv2)
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: System :: Monitoring
+Classifier: Topic :: System :: Networking :: Monitoring
+Classifier: Topic :: System :: Systems Administration
+Description-Content-Type: text/markdown
+
+**It's a fork of** <https://github.com/adubkov/py-zabbix>.
+
+# Zabbix module for Python
+
+## Install
+
+### GitHub
+```shell
+git clone https://github.com/nixargh/py-zabbix.git
+cd ./py-zabbix
+pip3 install -e ./
+```
+
+### pip
+```shell
+pip3 install zabbix
+```
+
+## Examples
+
+### ZabbixAPI
+
+```python
+
+    from zabbix.api import ZabbixAPI
+
+    # Create ZabbixAPI class instance
+    zapi = ZabbixAPI(url='https://localhost/zabbix/', user='admin', password='zabbix')
+
+    # Get all monitored hosts
+    result1 = zapi.host.get(monitored_hosts=1, output='extend')
+
+    # Get all disabled hosts
+    result2 = zapi.do_request('host.get',
+                              {
+                                  'filter': {'status': 1},
+                                  'output': 'extend'
+                              })
+
+    # Filter results
+    hostnames1 = [host['host'] for host in result1]
+    hostnames2 = [host['host'] for host in result2['result']]
+```
+
+### Add Session Reusage
+```python
+# Continuation of previous example
+
+session = zapi.auth
+
+other_zapi = ZabbixAPI(
+    url='https://localhost/zabbix/',
+    auth=session)
+
+```
+
+### ZabbixSender
+
+```python
+
+    from pyzabbix import ZabbixMetric, ZabbixSender
+
+    # Send metrics to zabbix trapper
+    packet = [
+      ZabbixMetric('hostname1', 'test[cpu_usage]', 2),
+      ZabbixMetric('hostname1', 'test[system_status]', "OK"),
+      ZabbixMetric('hostname1', 'test[disk_io]', '0.1'),
+      ZabbixMetric('hostname1', 'test[cpu_usage]', 20, 1411598020),
+    ]
+
+    result = ZabbixSender(use_config=True).send(packet)
+```
+
+
+# CHANGELOG 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## [1.2.4]
+### Changed
+- `setup.py` adjusted for PyPi.
+
+### Added
+- `README` example of session reusage.
+
+## [1.2.0] - 2018-08-20
+### Added
+- `api` allow session reusage.
+
+
