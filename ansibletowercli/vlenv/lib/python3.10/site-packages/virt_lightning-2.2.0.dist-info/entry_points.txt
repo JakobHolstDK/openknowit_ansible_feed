@@ -1,0 +1,3 @@
+[console_scripts]
+virt-lightning = virt_lightning.shell:main
+vl = virt_lightning.shell:main
