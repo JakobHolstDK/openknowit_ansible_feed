@@ -2,24 +2,20 @@
   "hosts": [
     {
       "name": "prodserver001",
-      "description": "Prodserver demo",
-      "credentials": { "name": "prodserver001_ssh", "description": "prodserverlogin", "user": "root", "ssh_key_file": "~/.ssh/prodserver001.pem" } 
+      "description": "Prodserver demo"
     },
     {
       "name": "prodserver002",
-      "description": "Prodserver demo",
-      "credentials": { "name": "prodserver002_ssh", "description": "prodserverlogin", "user": "root", "ssh_key_file": "~/.ssh/prodserver002.pem" } 
+      "description": "Prodserver demo"
     },
     {
       "name": "prodserver003",
-      "description": "Prodserver demo",
-      "credentials": { "name": "prodserver003_ssh", "description": "prodserverlogin", "user": "root", "ssh_key_file": "~/.ssh/prodserver003.pem" } 
+      "description": "Prodserver demo"
     },
     {
       "name": "prodserver004",
-      "description": "Prodserver demo",
-      "credentials": { "name": "prodserver004_ssh", "description": "prodserverlogin",  "user": "root", "ssh_key_file": "~/.ssh/prodserver004.pem" }
-    }
+      "description": "Prodserver demo"
+    } 
   ]
 }
 

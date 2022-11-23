@@ -1,22 +1,29 @@
 {
   "organization": [
     {
-      "name": "Region Midt",
+      "name": "Københavns universitet",
       "description": "Demo of ansible tower",
       "max_hosts": 100,
       "default_environment": "Ansible Engine 2.9 execution environment",
       "projects": [
+	      
         {
           "name": "main",
           "description": "Main project ensure automation engine consistency",
-	  "scm_type": "Git",
-	  "scm_url": "git@github.com:JakobHolstDK/openknowit_ansibleautomation_main.git"
+	  "scm_type": "git",
+	  "scm_url": "git@github.com:JakobHolstDK/openknowit_ansibleautomation_main.git",
+	  "scm_branch": "main",
+	  "credential": "masterinventory",
+	  "master": "True"
         },
         {
           "name": "zabbix",
           "description": "Project to ensure zabbix agent rollout and upgrading",
-	  "scm_type": "Git",
-	  "scm_url": "git@github.com:JakobHolstDK/openknowit_ansibleautomation_zabbix.git"
+	  "scm_type": "git",
+	  "scm_url": "git@github.com:JakobHolstDK/openknowit_ansibleautomation_zabbix.git",
+	  "scm_branch": "main",
+	  "credential": "masterinventory",
+	  "master": "True"
         }
       ],
       "credentials": [
