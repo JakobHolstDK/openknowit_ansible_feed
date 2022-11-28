@@ -1,44 +1,37 @@
 {
   "organization": [
     {
-      "name": "Miracle",
-      "description": "miracle Demo of ansible tower",
+      "name": "Københavns universitet",
+      "description": "Demo of ansible tower",
       "max_hosts": 100,
       "default_environment": "Ansible Engine 2.9 execution environment",
       "projects": [
         {
-          "name": "miraclemain",
-          "description": "Main project ensure automation engine consistent",
+          "name": "main",
+          "description": "Main project ensure automation engine consistency",
           "scm_type": "git",
           "scm_url": "git@github.com:JakobHolstDK/openknowit_ansibleautomation_main.git",
           "scm_branch": "main",
-          "credential": "github",
+          "credential": "masterinventory",
           "master": "True"
         },
         {
-          "name": "miraclezabbix",
+          "name": "zabbix",
           "description": "Project to ensure zabbix agent rollout and upgrading",
           "scm_type": "git",
           "scm_url": "git@github.com:JakobHolstDK/openknowit_ansibleautomation_zabbix.git",
           "scm_branch": "main",
-          "credential": "github",
+          "credential": "masterinventory",
           "master": "True"
         }
       ],
       "credentials": [
         {
           "name": "github",
-          "description": "Github service account for testing",
+          "description": "Github service account",
           "credential_type": "Source Control",
-          "user_vault_path": "project/openknowit/demogituser",
+          "ssh_key_file": "~/.ssh/idrsa",
           "kind": "scm"
-        },
-        {
-          "name": "machine",
-          "description": "machine service account for testing",
-          "credential_type": "Machine",
-          "user_vault_path": "project/openknowit/demosshuser",
-          "kind": "ssh"
         }
       ],
       "inventories": [

@@ -4,7 +4,7 @@ PREFIX="ansibleautomationmananger"
 REDIS="redis-cli"
 AWX='awx'
 
-vl status|awk '{ print $2".openknowit.com" }'	 > /tmp/vlinventory.ini
+vl status|awk '{ print $2".openknowit.com" }'    > /tmp/vlinventory.ini
 
 ###############################################################################################################
 # Save status to redis
@@ -83,7 +83,7 @@ do
         do
            echo "`date`: Credential : $credential"
            JSON=`cat demo.json | jq .organization[$orgid].credentials[]| jq '. | {"name": .name , "description": .description , "credential_type": .credential_type , "ssh_key_file": .ssh_key_file , "kind": .kind , "user": .user , "password": .password }' -c  |  grep "\"${credential}\""`
-    	   echo "$JSON"
+           echo "$JSON"
            NAME=`echo $JSON | jq .name -r `
            DESC=`echo $JSON | jq .description -r | tr '_' ' '`
            TYPE=`echo $JSON | jq .credential_type -r | tr '_' ' '`
@@ -93,7 +93,7 @@ do
            ${AWX} credential create --name "${NAME}" --description "${DESC}"  --credential_type "${TYPE}" --organization "${org}"
            myid=`${AWX} credentials list --name "${NAME}"|jq ".results[].id"`
            echo "`date`: The credential $credential has mow the id $myid"
-	   INPUTS="$(jq -R -s '{"username":"'"${USER}"'","ssh_key_data":.}' < ~/.ssh/id_rsa)"
+           INPUTS="$(jq -R -s '{"username":"'"${USER}"'","ssh_key_data":.}' < ~/.ssh/id_rsa)"
            ${AWX} credential modify $myid --inputs "${INPUTS}"
            sed -i "s/^$NAME$//" /tmp/$$.credentials.list
 
@@ -105,7 +105,7 @@ do
         for inventory  in `cat demo.json | jq .organization[$orgid].inventories[].name -r`
         do
            JSON=`cat demo.json | jq .organization[$orgid].inventories[]| jq '. | {"name": .name , "description": .description , "hosts": .hosts , "credential": .credential }' -c  |  grep "\"${inventory}\""`
-    	   echo "$JSON"
+           echo "$JSON"
            NAME=`echo $JSON | jq .name -r `
            DESC=`echo $JSON | jq .description -r | tr '_' ' '`
            HOSTSLIST=`echo $JSON | jq .hosts -r`
@@ -133,7 +133,7 @@ do
         do
             echo "`date`: Project : $project"
             JSON=`cat demo.json | jq ' .organization[].projects[]  | {"name": .name , "description": .description , "scm_type": .scm_type , "scm_url": .scm_url, "scm_branch": .scm_branch, "credential": .credential , "master": .master }' -c  |  grep "\"${project}\""`
-    	    echo "$JSON"
+            echo "$JSON"
             echo "`date`: $JSON"
             NAME=`echo $JSON | jq .name -r `
             DESC=`echo $JSON | jq .description -r `
@@ -189,66 +189,6 @@ exit
 #               "scm_update_on_launch": false,
 ##               "scm_update_cache_timeout": 0,
 [jho@exrhel0284 openknowit_ansible_feed-main]$
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
