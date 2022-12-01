@@ -23,6 +23,12 @@ Der er som reget 2 udfald når en kunde hopper på ansible automation.
     2.1 Der er kaos og alt sejler. der er ikke styr på noget og systemet bliver mere og mere uoverskueligt
     2.2 Der er en "person" der bruger alt sin tid på at være gurdian of the galaxy. Her vil vi ikke kunne bidrage med det store. (endnu)
     
+### SHOW THE 2 schenaia
+### Clean up
+### SHOW THE EMPTY SHELL
+
+    
+    
 I de to andre scenarier skal og kan vi hjælpe.
 
 ## HVad vil Vi levere
@@ -53,6 +59,8 @@ Der er også tiltænkt hvis man skal have flere eller færre execution noder så
 
 En ansible automation service beskrives af en json file
 alle "hemmeligheder" gemmes i hashicorp vault
+inventories skal ikke være statiske men bør integreres med CMDB (netbox) 
+For demontration purposes
 
 ```
 {
@@ -93,7 +101,6 @@ alle "hemmeligheder" gemmes i hashicorp vault
         {
           "name": "masterinventory",
           "description": "Inventorycontaining all servers under automation control",
-          "hosts": "openknowit.org",
           "type": "static"
         }
       ],
@@ -237,7 +244,6 @@ Beskriver så kundens customiserede struktur.
         {
           "name": "serverinventory",
           "description": "Inventorycontaining all servers under automation control",
-          "hosts": "openknowit.org",
           "type": "static"
         }
       ],
@@ -413,6 +419,14 @@ Beskriver så kundens customiserede struktur.
   ]
 }
 ```
+### REMOVE /opt/open....
+
+RUN THE installer.... ( a few times due to lack of checks)
+
+WE should see a structure
+
+
+
 
 
 
