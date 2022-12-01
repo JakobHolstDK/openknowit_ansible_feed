@@ -1,5 +1,9 @@
 # Ansible AUTOMATION
 
+
+Denne demo er lavet på en server på internette uden nogen data der er "farlige" og alt er opfundet. Den kan "spindes" op fra intet og kan så lave alle servere der skal bruges til demo
+
+
 ## Hvad er Ansible automation v2:
 * Et framework med en kæmpe potentiale. 
 * Centraliset styring af playbooks
