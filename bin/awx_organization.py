@@ -62,7 +62,6 @@ else:
 r = redis.Redis()
 
 def getawxdata(item):
-  print("AWX: %s" % item)
   ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -89,12 +88,11 @@ def getawxdata(item):
     if ( savedata == True ):
       for result in mydata['results']:
         key = "ansible.openknowit.com:" + item +":id:" + str(result['id'])
-        print(key)
-        r.set(key, str(result))
+        r.set(key, str(result), 600)
         key = "ansible.openknowit.com:" + item +":name:" + result['name']
-        r.set(key, str(result['id']))
+        r.set(key, str(result['id']), 600 )
         key = "ansible.openknowit.com:" + item +":orphan:" + result['name']
-        r.set(key, str(result))
+        r.set(key, str(result), 600)
 
 def vault_get_secret(path):
   secret = vault.read_secret(engine_name="secret", secret=path)['data']['data']
@@ -103,15 +101,12 @@ def vault_get_secret(path):
 
 def awx_get_id(item,name):
   key = "ansible.openknowit.com:" + item +":name:" + name
-  print("-----------------------------------------------------")
-  print(key)
-  print("-----------------------------------------------------")
   myvalue =  r.get(key)
-  mydecode = False
+  mydevode = ""
   try: 
     mydecode = myvalue.decode()
   except:
-    return "-"
+    mydecode = ""
   return mydecode
 
   
@@ -123,7 +118,6 @@ def awx_delete(item, name):
   itemid = (awx_get_id(item, name))
   url ="https://ansible.openknowit.com/api/v2/" + item + "/" + itemid
   resp = requests.delete(url,headers=headers)
-  print(resp.status_code)
 
 def awx_purge_orphans():
   orphans = r.keys("*:orphan:*")
@@ -131,19 +125,72 @@ def awx_purge_orphans():
     mykey = orphan.decode().split(":")
     awx_delete(mykey[1],mykey[3])
 
+def awx_create_label(name, organization):
+  orgid = (awx_get_id("organizations", organization))
+  if ( orgid != "" ):
+    data = {
+       "name": name,
+       "organization": orgid
+       }
+    ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
+    mytoken = ansibletoken['token']
+    headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
+    url ="https://ansible.openknowit.com/api/v2/labels/"
+    resp = requests.post(url,headers=headers, json=data)
+      
 
-def awx_get_project(name):
-    return 0
 
-def awx_create_organization(name, description, max_hosts, DEE):
-  print("Credentials:")
+def awx_create_inventory(name, description, organization, inventorytype):
+  print("Creating inventory")
   try:  
-    orgid = (awx_get_id("organizations", name))
-    print("Organization has an id : %s" % orgid)
+    invid = (awx_get_id("inventories", name))
   except:
     print("Unexcpetede error")
-  if(orgid == '-'):
+  if (invid == ""):
+    orgid = (awx_get_id("organizations", organization))
+    data = {
+          "name": name,
+          "description": description,
+          "tags": {"inventorytype": inventorytype },
+          "organization": orgid
+         }
+    ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
+    mytoken = ansibletoken['token']
+    headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
+    url ="https://ansible.openknowit.com/api/v2/inventories/"
+    resp = requests.post(url,headers=headers, json=data)
 
+def awx_create_host(name, description, inventory, organization):
+  print("Create host")
+  try:  
+    invid = (awx_get_id("inventories", inventory))
+  except:
+    print("Unexcpetede error")
+  orgid = (awx_get_id("inventories", organization))
+  data = {
+        "name": name,
+        "description": description,
+        "organization": orgid,
+        "inventory": invid
+       }
+  ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
+  mytoken = ansibletoken['token']
+  headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
+  url ="https://ansible.openknowit.com/api/v2/hosts/"
+  resp = requests.post(url,headers=headers, json=data)
+
+
+
+
+
+
+def awx_create_organization(name, description, max_hosts, DEE):
+  print("Creating org")
+  try:  
+    orgid = (awx_get_id("organizations", name))
+  except:
+    print("Unexcpetede error")
+  if (orgid == ""):
     ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
     mytoken = ansibletoken['token']
     headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -154,27 +201,117 @@ def awx_create_organization(name, description, max_hosts, DEE):
          }
     url ="https://ansible.openknowit.com/api/v2/organizations/"
     resp = requests.post(url,headers=headers, json=data)
-    print(resp.content)
-    print("Org %s created" % name )
-    getawxdata("organizations")
+  else:    
+    ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
+    mytoken = ansibletoken['token']
+    headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
+    data = {
+          "name": name,
+          "description": description,
+          "max_hosts": max_hosts
+         }
+    url ="https://ansible.openknowit.com/api/v2/organizations/%s" % orgid
+    resp = requests.put(url,headers=headers, json=data)
+  getawxdata("organizations")
 
 
-def awx_create_credential( name, description, credential_type, credentialuser, kind, organization):
+def awx_create_schedule(name, unified_job_template,  description, tz, start, run_frequency, run_every, end, scheduletype):
+  ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
+  mytoken = ansibletoken['token']
+  headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
+  # The scheduling is tricky and must be refined
+  if ( scheduletype == "Normal"):
+     data = {
+      "name": name,
+      "unified_job_template": unified_job_template,
+      "description": description,
+      "local_time_zone": tz,
+      "dtstart": start['year'] + "-" + start['month'] + "-" + start['day'] + "T" + start['hour'] + ":" + start['minute'] + ":" + start['second']  + "Z",
+      "rrule": "DTSTART;TZID=" + tz + ":" + start['year'] + start['month'] + start['day'] + "T" + start['hour'] + start['minute'] + start['second'] +" RRULE:INTERVAL=" + run_frequency + ";FREQ=" + run_every
+    }
+  url ="https://ansible.openknowit.com/api/v2/schedules/"
+  resp = requests.post(url,headers=headers, json=data)
+  print(resp.content)
+
+
+def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
+  orgid = (awx_get_id("organizations", organization))
+  invid = (awx_get_id("inventories", inventory))
+  projid = (awx_get_id("projects", project))
+  credid = (awx_get_id("credentials", credential))
+  eeid = (awx_get_id("execution_environments", ee))
+
+  data = {
+    "name": name,
+    "description": description,
+    "job_type": "run",
+    "inventory": invid,
+    "project": projid,
+    "playbook": playbook,
+    "scm_branch": "",
+    "forks": 0,
+    "limit": "",
+    "verbosity": 0,
+    "extra_vars": "",
+    "job_tags": "",
+    "force_handlers": "false",
+    "skip_tags": "",
+    "start_at_task": "",
+    "timeout": 0,
+    "use_fact_cache": "false",
+    "execution_environment": eeid,
+    "host_config_key": "",
+    "ask_scm_branch_on_launch": "false",
+    "ask_diff_mode_on_launch": "false",
+    "ask_variables_on_launch": "false",
+    "ask_limit_on_launch": "false",
+    "ask_tags_on_launch": "false",
+    "ask_skip_tags_on_launch": "false",
+    "ask_job_type_on_launch": "false",
+    "ask_verbosity_on_launch": "false",
+    "ask_inventory_on_launch": "false",
+    "ask_credential_on_launch": "false",
+    "survey_enabled": "false",
+    "become_enabled": "false",
+    "diff_mode": "false",
+    "allow_simultaneous": "false",
+    "job_slice_count": 1
+}
+  ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
+  mytoken = ansibletoken['token']
+  headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
+  url = "https://ansible.openknowit.com/api/v2/job_templates/"
+  resp = requests.post(url,headers=headers, json=data)
+  getawxdata("job_templates")
+  jobid = awx_get_id("job_templates", name)
+  associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
+  print(associatecommand)
+  #
+  # This shouldnt be a command but i cant find the rest api call
+  os.system(associatecommand)
+  #
+
+
+def awx_create_team():
+  print("create team")
+
+def awx_create_user():
+  print("create team")
+
+def awx_create_credential( name, description, credential_type, credentialuser, kind, organization ):
   try:
     credid = (awx_get_id("credentials", name))
   except:
     print("Unexcpetede error")
 
+  orgid = (awx_get_id("organizations", organization))
   ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
-  orgid = (awx_get_id("organizations", organization))
-  print("The organizatiois %s %s" % (orgid, organization))
   credentialtypeid = (awx_get_id("credential_types", credential_type))
   sshkey = vault_get_secret(credentialuser)['key']
   myuser = vault_get_secret(credentialuser)['username']
   mypass = vault_get_secret(credentialuser)['password']
-
   if( kind == "scm"):
     data = {
         "name": name,
@@ -208,7 +345,7 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
         "kind": kind
         }
 
-  if ( credid == '-'):
+  if ( credid == ""):
     url = "https://ansible.openknowit.com/api/v2/credentials/"
     resp = requests.post(url,headers=headers, json=data)
   else:
@@ -217,21 +354,30 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
   getawxdata("credentials")
 
 
+def awx_get_project(name,organization):
+  try:  
+    projid = (awx_get_id("projects", name))
+  except:
+    print("Unexpected error")
+  ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
+  mytoken = ansibletoken['token']
+  headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
+  orgid = (awx_get_id("organizations", organization))
+  url ="https://ansible.openknowit.com/api/v2/projects/%s" % projid
+  resp = requests.get(url,headers=headers)
 
 def awx_create_project(name, description, scm_type, scm_url, scm_branch, credential, organization):
   try:  
     projid = (awx_get_id("projects", name))
-  
   except:
     print("Unexpected error")
-
   ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   orgid = (awx_get_id("organizations", organization))
   credid = (awx_get_id("credentials", credential))
   data = {
-        "name": organization + name,
+        "name": name,
         "description": description,
         "scm_type": scm_type,
         "scm_url": scm_url,
@@ -239,13 +385,21 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
         "scm_branch": scm_branch,
         "credential": credid
        }
-  url ="https://ansible.openknowit.com/api/v2/projects/"
-  resp = requests.post(url,headers=headers, json=data)
-  print(resp.content)
+
+  if (projid == ""):
+    print("Creating a new project")
+    url ="https://ansible.openknowit.com/api/v2/projects/"
+    resp = requests.post(url,headers=headers, json=data)
+  else:
+    print("Updating project")
+    print(data)
+    url ="https://ansible.openknowit.com/api/v2/projects/%s/" % projid
+    resp = requests.put(url,headers=headers, json=data)
+
   getawxdata("projects")
 
 
-items = {"organisations", "projects", "credentials", "hosts", "inventories", "credential_types"}    
+items = {"organisations", "projects", "credentials", "hosts", "inventories", "credential_types", "labels" , "instance_groups", "job_templates"}    
 #items = {"organizations", "projects"}    
 for item in items:
   getawxdata(item)
@@ -268,8 +422,11 @@ for org in (config['organization']):
   projects = org['projects']
   credentials = org['credentials']
   inventories = org['inventories']
+  hosts = org['hosts']
   users = org['users']
-  teams = org['teams']
+  labels = org['labels']
+  templates = org['templates']
+  schedules = org['schedules']
 
   for credential in credentials:
     credentialname = credential['name']
@@ -281,7 +438,6 @@ for org in (config['organization']):
     r.delete(key)
     awx_create_credential( credentialname, credentialdesc, credentialtype, credentialuser, credentialkind, orgname)
 
-
   for project in projects:
     projectname = project['name']
     projectdesc = project['description']
@@ -292,12 +448,69 @@ for org in (config['organization']):
     key = "ansible.openknowit.com:projects:orphan:" + projectname
     r.delete(key)
     awx_create_project(projectname, projectdesc, projecttype, projecturl, projectbrnc, projectcred, orgname)
+    awx_get_id("projects", projectname)
+    projid = (awx_get_id("projects", projectname))
 
-    
+  for label in labels:
+    labelname = label['name']
+    awx_create_label(labelname, orgname)
+
+  for inventory in inventories:
+    inventoryname = inventory['name']
+    inventorydesc = inventory['description']
+    inventorytype = inventory['type']
+    awx_create_inventory(inventoryname, inventorydesc,  orgname, inventorytype )
+
+  for host in hosts:
+    hostname = host['name']
+    hostdesc = host['description']
+    hostinventory = host['inventory']
+    awx_create_host(hostname, hostdesc, hostinventory, orgname )
 
 
+  for template in templates:
+    templatename = template['name']
+    templatedescription = template['description']
+    templatejob_type = template['job_type']
+    templateinventory =  template['inventory']
+    templateproject = template['project']
+    templateEE = template['EE']
+    templatecredential = template['credentials']  
+    templateplaybook = template['playbook']
+    awx_create_template(templatename, templatedescription, templatejob_type, templateinventory, templateproject, templateEE, templatecredential, templateplaybook, orgname)
 
 
+  for schedule in schedules:
+    schedulename = schedule['name']
+
+    if ( schedule['type'] == "job"):
+      templatename = schedule['template']
+      unified_job_template_id = awx_get_id("job_templates", templatename)
+
+    if ( schedule['type'] == "project"):
+      projectname = schedule['project']
+      unified_job_template_id = awx_get_id("projects", projectname)
+
+    tz = schedule['local_time_zone']
+
+    if ( schedule ['start'] == "now" ):
+      dtstart = { 
+        "year": "2012",
+        "month": "12",
+        "day": "01",
+        "hour": "12",
+        "minute": "00",
+        "second": "00"
+        }
+
+    if ( int(schedule['run_every_minute']) ):
+      scheduletype="Normal"
+      run_frequency =  schedule['run_every_minute']
+      run_every = "MINUTELY"
+  
+    if ( schedule ['end'] == "never" ):
+      dtend = "null"
+    awx_create_schedule(schedulename, unified_job_template_id, description,tz, dtstart, run_frequency, run_every, dtend, scheduletype)
 
         
 
