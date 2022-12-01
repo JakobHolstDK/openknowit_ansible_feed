@@ -54,7 +54,7 @@ Der er også tiltænkt hvis man skal have flere eller færre execution noder så
 En ansible automation service beskrives af en json file
 alle "hemmeligheder" gemmes i hashicorp vault
 
-'''
+```
 {
   "organization": [
     {
@@ -179,7 +179,7 @@ alle "hemmeligheder" gemmes i hashicorp vault
   ]
 }
 
-'''
+```
 
 
 
