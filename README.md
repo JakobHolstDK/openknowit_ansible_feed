@@ -181,6 +181,243 @@ alle "hemmeligheder" gemmes i hashicorp vault
 
 ```
 
+Dette er statisk og sørger for at ansible automation  kan rydde op og vedligeholde ansible autonation strukturen.
+systemet fungere som det "plejer" og kan bruges af normalt.
+
+
+Et git repo (openknowit_ansibleautomation_main0) 
+Beskriver så kundens customiserede struktur.
+```
+├── ansiblemanager.yml
+├── bin
+│   └── createhostjson.sh
+├── checkup.yml
+├── demo.json
+├── LICENSE
+├── meta
+│   └── main.yml
+├── projects.json
+├── projects.yml
+└── README.md
+{
+  "organization": [
+    {
+      "name": "Miracle",
+      "description": "Demo of ansible automation",
+      "max_hosts": 90,
+      "default_environment": "Ansible Engine 2.9 execution environment",
+      "projects": [
+        {
+          "name": "zabbix",
+          "description": "Main project ensure automation engine consistent",
+          "scm_type": "git",
+          "scm_url": "git@github.com:JakobHolstDK/openknowit_ansibleautomation_zabbix.git",
+          "scm_branch": "main",
+          "credential": "github",
+          "master": "True"
+        }
+      ],
+      "credentials": [
+        {
+          "name": "github_miracle",
+          "description": "Github service account for testing",
+          "credential_type": "Source Control",
+          "user_vault_path": "project/openknowit/demogituser",
+          "kind": "scm"
+        },
+        { 
+          "name": "servers",
+          "description": "main service account for testing",
+          "credential_type": "Machine",
+          "user_vault_path": "project/openknowit/remotesshuser",
+          "kind": "ssh"
+        }
+      ],
+      "inventories": [
+        {
+          "name": "serverinventory",
+          "description": "Inventorycontaining all servers under automation control",
+          "hosts": "openknowit.org",
+          "type": "static"
+        }
+      ],
+      "hosts": [
+	{
+          "name": "demoautocat001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "demoautoctl001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "demoautoexec001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "demoautoexec002.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "demoautoexec003.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "demoautohub001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "demodb001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "demosso001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "guacdb001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "guacrhel001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "guacubuntu001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "knowitcobbler001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "knowitguaca001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "monnetbox001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "monnetboxdb001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "monshorewall001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "monzabbix001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "monzabbixdb001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "netboxapp001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "netboxdb001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "netboxweb001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "netboxweb002.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        },
+        {
+          "name": "prodserver001.openknowit.com",
+          "description": "Server autocreated",
+          "inventory": "serverinventory"
+        }
+      ],
+      "templates": [
+        {
+          "name": "zabbix_checkup",
+          "description": "job checking connectivity",
+          "job_type": "run",
+          "inventory": "serverinventory",
+          "project": "zabbix",
+          "EE": "Automation Hub Default execution environment",
+          "credentials": "servers",
+          "playbook": "checkup.yml"
+        }
+      ],
+      "schedules": [
+        {
+          "name": "zabbix_checkup",
+          "type": "job",
+          "template": "zabbix_checkup",
+          "description": "Master job for ensuring connectivity",
+          "local_time_zone": "CET",
+          "run_every_minute": "1",
+          "start": "now",
+          "end": "never"
+        },
+        {
+          "name": "zabbixprojectschedule",
+          "type": "project",
+          "project": "zabbix",
+          "description": "Master job for syncing project zabbix",
+          "local_time_zone": "CET",
+          "run_every_minute": "10",
+          "start": "now",
+          "end": "never"
+        }
+      ],
+      "users": 
+        {
+          "user_vault_path": "project/openknowit/users",
+          "description": "AD integration is mandatory"
+        },
+      "labels":
+      [
+        { 
+          "name": "static"
+        },
+        {
+          "name": "production"
+        },
+        {
+           "name": "test"
+        }
+      ]
+    }
+  ]
+}
+```
+
+
+
+
+
 
 
 
