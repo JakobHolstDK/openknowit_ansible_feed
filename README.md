@@ -1,19 +1,19 @@
 # Ansible AUTOMATION
 
 ## Hvad er Ansible automation v2:
-
 * Et framework med en kæmpe potentiale. 
 * Centraliset styring af playbooks
 * dynamiske inventories
 * Seperations of dyties
-* et kæmpe bibliotek af pre backed playbooks
+* et kæmpe bibliotek af pre backed Redhat supported playbooks
+* blablabla
 
-## HVad er det også 
+## Hvad er det også 
 * en tom skal
 * kompliceret at bibeholde struktur
 * organiske blob af data
 * placeholder for future legacy
-* 
+* Kompliceret infratruktur ingen tør opgradere
 
 Når vi sælger en automation platform til en kunde, sælger vi en tom skal, et interface til et imponerende framwork med uanede muligheder
 
@@ -23,7 +23,7 @@ Der er som reget 2 udfald når en kunde hopper på ansible automation.
     2.1 Der er kaos og alt sejler. der er ikke styr på noget og systemet bliver mere og mere uoverskueligt
     2.2 Der er en "person" der bruger alt sin tid på at være gurdian of the galaxy. Her vil vi ikke kunne bidrage med det store. (endnu)
     
-### SHOW THE 2 schenaia
+### SHOW THE 2 scenaries
 ### Clean up
 ### SHOW THE EMPTY SHELL
 
@@ -49,10 +49,16 @@ vent.... pling
 Ansible automation is here
 Den er rimelig robust og kan efter sigende opgradere flyvende.
 
+### Opgradering og vedligehold.
 Versionsstyring er lidt shaky. man skal holde øje med om der er kommet en ny og deres krav til target os er lidt spooky.
+"Nogen" (tm) bør gå lidt efter RedHat for at få dette til at være enterpris
+Der har været issue med RHEL versioner (8 , 9 , 8.9 ) , mystiske releases, installationer der fejler selvop det er samme major release
 
-Men det ser ud til at være skruet sammen således at der kommer en platform ud og at man kan "heale" setuppet ved at genkøre install.
+Når det er sagt:
+Det ser ud til at være skruet sammen således at der kommer en platform ud og at man kan "heale" setuppet ved at genkøre install.
 Der er også tiltænkt hvis man skal have flere eller færre execution noder så tillføjes de til inventory og bum.... så er der opgraderet
+Dette ville kunne styres ved hjælp af playbook kørt af systemet mod sig selv.
+(dette skal testest men jeg er fuld af fortrøstning)
 
 
 ### Opretholde basal struktur med ansible automation running anstible automation configuaration.
