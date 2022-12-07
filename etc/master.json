@@ -39,7 +39,7 @@
           "hosts": "openknowit.org",
 	  "variables": {
 	    "aaoaa_serviceaccount": {
-	      "name": "aaoaa_serviceaccount",
+	      "name": "aaoaa",
 	      "gecos": "Anible on ansible automatiob"
 	    }
 	  },

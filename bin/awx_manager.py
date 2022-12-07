@@ -62,7 +62,7 @@ else:
     exit
 
 r = redis.Redis()
-#r.flushdb()
+r.flushdb()
 ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
 
 def getawxdata(item):
@@ -96,7 +96,6 @@ def getawxdata(item):
         r.set(key, str(result['id']), 600 )
         key = "ansible.openknowit.com:" + item +":orphan:" + result['name']
         r.set(key, str(result), 600)
-  print("done")
 
 def vault_get_secret(path):
   secret = vault.read_secret(engine_name="secret", secret=path)['data']['data']
@@ -154,13 +153,30 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
           "name": name,
           "description": description,
           "inventorytype": inventorytype,
-          "variables": variables,
           "organization": orgid
          }
     mytoken = ansibletoken['token']
     headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
     url ="https://ansible.openknowit.com/api/v2/inventories/"
     resp = requests.post(url,headers=headers, json=data)
+    loop = True
+    while ( loop ):
+        getawxdata("inventories")
+        try:
+            invid = (awx_get_id("inventories", name))
+        except:
+            print("Unexpected error")
+        if (invid != "" ):
+          loop = False
+  mytoken = ansibletoken['token']
+  headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
+  url ="https://ansible.openknowit.com/api/v2/inventories/%s/variable_data/" % invid
+  resp = requests.put(url,headers=headers, json=variables)
+  print(resp.content)
+
+
+
+
 
 def awx_create_host(name, description, inventory, organization):
   print("Create host")
@@ -229,7 +245,6 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
     }
   url ="https://ansible.openknowit.com/api/v2/schedules/"
   resp = requests.post(url,headers=headers, json=data)
-  print(resp.content)
 
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
@@ -281,6 +296,7 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   resp = requests.post(url,headers=headers, json=data)
   getawxdata("job_templates")
   jobid = awx_get_id("job_templates", name)
+
   associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
   print(associatecommand)
   #
@@ -399,11 +415,14 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
         except:
             print("Unexpected error")
         projectinfo = awx_get_project(projid, organization)
-        if( projectinfo['status'] == "successful"):
-            loop = False
+        try:
+          if( projectinfo['status'] == "successful"):
+              loop = False
+        except:
+          print("Project status unknown")
 
   else:
-    print("Updating project")
+    print("Updating project %s " % name)
     url ="https://ansible.openknowit.com/api/v2/projects/%s/" % projid
     resp = requests.put(url,headers=headers, json=data)
     getawxdata("projects")
@@ -413,11 +432,10 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
         print("Unexpected error")
     projectinfo = awx_get_project(projid, organization)
     if( projectinfo['status'] == "successful"):
-        print ("projecti %s  is ok")  % name 
+        print ("project %s  is ok"  % name )
     else:    
-        print ("project %s  is ok") % name
-  getawxdata("projects")
-
+        print ("project %s  is ok" % name )
+  refresh_awx_data()
 
 
 def refresh_awx_data():
@@ -492,7 +510,9 @@ for org in (config['organization']):
     while (loop):
         print("Check if %s is created" % credentialname )
         credid = awx_get_id("credentials", credentialname)
-        print("We have an ID called %s") % credid
+        if ( credid != "" ):
+          loop = False
+          print("We have an ID called %s" % credid)
 
 
 
