@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+ORGANIZATION="openknowit"
+
+
+source ~/venv/bin/activate
+vault secrets enable -version=2 -path aaoaa/${ORGANIZATION} kv >/dev/null 2>&1
+redis-cli flushall
+nohup /opt/openknowit_ansible_feed/bin/aaoaad >/var/log/aaoaa/aaoaad.log 2>&1 & 
+	
+

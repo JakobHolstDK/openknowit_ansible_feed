@@ -140,7 +140,7 @@ def awx_create_label(name, organization):
       
 
 
-def awx_create_inventory(name, description, organization, inventorytype, variables):
+def awx_create_inventory(name, description, organization, inventorytype):
   print("Creating inventory")
   try:  
     invid = (awx_get_id("inventories", name))
@@ -151,8 +151,7 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
     data = {
           "name": name,
           "description": description,
-          "inventorytype": inventorytype,
-          "variables": variables, 
+          "tags": {"inventorytype": inventorytype },
           "organization": orgid
          }
     ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
@@ -406,9 +405,8 @@ items = {"organisations", "projects", "credentials", "hosts", "inventories", "cr
 #items = {"organizations", "projects"}    
 for item in items:
   getawxdata(item)
-
-configurations = {"master.json", "/opt/openknowit_ansibleautomation_main/demo.json"}    
-for cfgfile in configurations:
+configs = { "/opt/openknowit_ansible_feed/etc/master.json" }
+for cfgfile in configs:
 
   f = open(cfgfile)
   config = json.loads(f.read())
@@ -465,8 +463,7 @@ for cfgfile in configurations:
       inventoryname = inventory['name']
       inventorydesc = inventory['description']
       inventorytype = inventory['type']
-      inventoryvariables = inventory['vatiables']
-      awx_create_inventory(inventoryname, inventorydesc,  orgname, inventorytype, inventoryvariables )
+      awx_create_inventory(inventoryname, inventorydesc,  orgname, inventorytype )
 
     for host in hosts:
       hostname = host['name']

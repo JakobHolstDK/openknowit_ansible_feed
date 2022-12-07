@@ -1,2 +1,0 @@
-export INPUT="{\"username\": \"\",\"ssh_key_data\": \"`cat ~/.ssh/id_rsa`\"}"
-
