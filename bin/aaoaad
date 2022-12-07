@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+ORGANIZATION="openknowit"
+
+source ~/venv/bin/activate
+vault secrets enable -version=2 -path aaoaa/${ORGANIZATION} kv
+
+
+STATUS="RUNNING"
+
+while [[ ${STATUS} != "TERMINATE" ]];
+do
+	/opt/openknowit_ansible_feed/bin/awx_manager.py
+	sleep 5
+done
+	
+
