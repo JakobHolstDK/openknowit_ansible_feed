@@ -140,7 +140,7 @@ def awx_create_label(name, organization):
       
 
 
-def awx_create_inventory(name, description, organization, inventorytype):
+def awx_create_inventory(name, description, organization, inventorytype, variables):
   print("Creating inventory")
   try:  
     invid = (awx_get_id("inventories", name))
@@ -151,7 +151,8 @@ def awx_create_inventory(name, description, organization, inventorytype):
     data = {
           "name": name,
           "description": description,
-          "tags": {"inventorytype": inventorytype },
+          "inventorytype": inventorytype,
+          "variables": variables,
           "organization": orgid
          }
     ansibletoken = vault.read_secret(engine_name="secret", secret="awx/ansible.openknowit.com")['data']['data']
@@ -463,7 +464,8 @@ for cfgfile in configs:
       inventoryname = inventory['name']
       inventorydesc = inventory['description']
       inventorytype = inventory['type']
-      awx_create_inventory(inventoryname, inventorydesc,  orgname, inventorytype )
+      inventoryvariables = inventory['variables']
+      awx_create_inventory(inventoryname, inventorydesc, orgname, inventorytype, inventoryvariables)
 
     for host in hosts:
       hostname = host['name']
