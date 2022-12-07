@@ -2,6 +2,8 @@
 ORGANIZATION="openknowit"
 
 source ~/venv/bin/activate
+source /etc/vaultenvironment
+
 vault secrets enable -version=2 -path aaoaa/${ORGANIZATION} kv
 
 
