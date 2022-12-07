@@ -449,7 +449,7 @@ def refresh_awx_data():
 # Main:  start
 ########################################################################################################################
 
-cfgfile = "etc/master.json"
+cfgfile = "/etc/master.json"
 
 if (len(sys.argv) == 1):
     print("Runnig standalone")
