@@ -384,6 +384,7 @@ def awx_get_project(projid, organization):
   return   json.loads(resp.content)
   
 def awx_create_project(name, description, scm_type, scm_url, scm_branch, credential, organization):
+  getawxdata("projects")
   try:  
     projid = (awx_get_id("projects", name))
   except:
