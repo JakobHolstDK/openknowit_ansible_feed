@@ -449,13 +449,17 @@ def refresh_awx_data():
 # Main:  start
 ########################################################################################################################
 
-cfgfile = "/etc/master.json"
+cfgfile = "etc/master.json"
 
 if (len(sys.argv) == 1):
     print("Runnig standalone")
 else:
     print("running custom config")
-    cfgfile = sys.argv[1]
+    if (sys.argv[1] == "master" ):
+        cfgfile = "//opt/openknowit_ansible_feed/etc/master.json"
+    if (sys.argv[1] == "custom" ):
+        cfgfile = "//opt/openknowit_ansibleautomation_main/etc/custom.json"
+
 print("Open config file %s " % cfgfile)
 
 f = open(cfgfile)

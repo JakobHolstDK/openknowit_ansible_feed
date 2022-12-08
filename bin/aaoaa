@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+source ~/venv/bin/activate
+source /etc/vaultenvironment
+
+/opt/openknowit_ansible_feed/bin/awx_manager.py custom
+
+	
+
