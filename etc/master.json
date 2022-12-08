@@ -7,7 +7,7 @@
       "default_environment": "Ansible Engine 2.9 execution environment",
       "projects": [
         {
-          "name": "main",
+          "name": "000_main",
           "description": "Main project ensure automation engine consistent",
           "scm_type": "git",
           "scm_url": "git@github.com:JakobHolstDK/openknowit_ansibleautomation_main.git",
