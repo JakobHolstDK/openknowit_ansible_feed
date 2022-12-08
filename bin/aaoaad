@@ -10,7 +10,7 @@ do
 	then
 		/opt/openknowit_ansible_feed/bin/awx_manager.py master
 	fi
-	if [[ -f i/opt/openknowit_ansibleautomation_main/etc/custom.json ]];
+	if [[ -f /opt/openknowit_ansibleautomation_main/etc/custom.json ]];
 	then
 		/opt/openknowit_ansible_feed/bin/awx_manager.py custom
 	fi
