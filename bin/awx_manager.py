@@ -275,9 +275,6 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
   tmplid = (awx_get_id("job_templates", name))
-  print("-------------------------")
-  print(tmplid)
-  print("--------------------------")
   orgid = (awx_get_id("organizations", organization))
   invid = (awx_get_id("inventories", inventory))
   projid = (awx_get_id("projects", project))
