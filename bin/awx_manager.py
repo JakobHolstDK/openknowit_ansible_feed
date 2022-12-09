@@ -179,7 +179,7 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
 
 
 def awx_create_host(name, description, inventory, organization):
-  print("Create host name: %s Desc: %s Inventory %s Org %s") % (name, description, inventory, organization)
+  print("Create host name: %s Desc: %s Inventory %s Org %s" % (name, description, inventory, organization) )
   try:  
     invid = (awx_get_id("inventories", inventory))
   except:
