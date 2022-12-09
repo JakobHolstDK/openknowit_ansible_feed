@@ -509,11 +509,9 @@ for org in (config['organization']):
     awx_create_credential( credentialname, credentialdesc, credentialtype, credentialuser, credentialkind, orgname)
     loop = True
     while (loop):
-        print("Check if %s is created" % credentialname )
         credid = awx_get_id("credentials", credentialname)
         if ( credid != "" ):
           loop = False
-          print("We have an ID called %s" % credid)
 
   for project in projects:
     projectname = project['name']
