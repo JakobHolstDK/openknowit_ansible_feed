@@ -262,6 +262,7 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
     "project": projid,
     "playbook": playbook,
     "scm_branch": "",
+    "credential": credid,
     "forks": 0,
     "limit": "",
     "verbosity": 0,
