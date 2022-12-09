@@ -339,7 +339,6 @@ def awx_create_user(name, description, organization):
   prettyllog("manage", "user", name, organization, "-")
 
 def awx_create_credential( name, description, credential_type, credentialuser, kind, organization ):
-  prettyllog("manage", "credential", name, organization, "-")
   try:
     credid = (awx_get_id("credentials", name))
   except:
@@ -390,16 +389,16 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
     url = "https://ansible.openknowit.com/api/v2/credentials/"
     resp = requests.post(url,headers=headers, json=data)
     if( resp.status_code == 200):
-      prettyllog("manage", "credential", name, "-", "created")
+      prettyllog("manage", "credential", name, organization, "created")
     if( resp.status_code == 400):
-      prettyllog("manage", "credential", name, "-", "exists")
+      prettyllog("manage", "credential", name, organization, "exists")
   else:
     url = "https://ansible.openknowit.com/api/v2/credentials/%s/" % credid
     resp = requests.put(url,headers=headers, json=data)
     if( resp.status_code == 200):
-      prettyllog("manage", "credential", name, "-", "updated")
+      prettyllog("manage", "credential", name, organization, "updated")
     if( resp.status_code == 400):
-      prettyllog("manage", "credential", name, "-", "up to date")
+      prettyllog("manage", "credential", name, organization, "up to date")
   getawxdata("credentials")
 
 
