@@ -148,7 +148,7 @@ def awx_create_label(name, organization):
 
 
 def awx_create_inventory(name, description, organization, inventorytype, variables):
-  prettyllog("manage", "inventory", name, organization, description)
+  prettyllog("manage", "inventory", name, organization, "-")
   try:  
     invid = (awx_get_id("inventories", name))
   except:
@@ -181,7 +181,7 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
 
 
 def awx_create_host(name, description, inventory, organization):
-  prettyllog("manage", "host", name, organization, description)
+  prettyllog("manage", "host", name, organization, "-")
   try:  
     invid = (awx_get_id("inventories", inventory))
   except:
@@ -209,7 +209,7 @@ def awx_create_host(name, description, inventory, organization):
 
 
 def awx_create_organization(name, description, max_hosts, DEE):
-  prettyllog("manage", "organization", name, "-", description)
+  prettyllog("manage", "organization", name, "-", "-")
   try:  
     orgid = (awx_get_id("organizations", name))
   except:
@@ -245,7 +245,7 @@ def awx_create_organization(name, description, max_hosts, DEE):
 
 
 def awx_create_schedule(name, unified_job_template,  description, tz, start, run_frequency, run_every, end, scheduletype):
-  prettyllog("manage", "schedule", name, "-", description)
+  prettyllog("manage", "schedule", name, "-", "-")
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   # The scheduling is tricky and must be refined
@@ -267,7 +267,7 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
 
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
-  prettyllog("manage", "template", name, organization, description)
+  prettyllog("manage", "template", name, organization, "-")
   orgid = (awx_get_id("organizations", organization))
   invid = (awx_get_id("inventories", inventory))
   projid = (awx_get_id("projects", project))
@@ -330,18 +330,17 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
 
 
 def awx_create_team(name, description, organization):
-  prettyllog("manage", "team", name, organization, description)
+  prettyllog("manage", "team", name, organization, "-")
 
 def awx_create_user(name, description, organization):
-  prettyllog("manage", "user", name, organization, description)
+  prettyllog("manage", "user", name, organization, "-")
 
 def awx_create_credential( name, description, credential_type, credentialuser, kind, organization ):
-  prettyllog("manage", "credential", name, organization, description)
+  prettyllog("manage", "credential", name, organization, "-")
   try:
     credid = (awx_get_id("credentials", name))
   except:
     print("Unexcpetede error")
-
   orgid = (awx_get_id("organizations", organization))
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -417,7 +416,7 @@ def awx_get_project(projid, organization):
   return   json.loads(resp.content)
   
 def awx_create_project(name, description, scm_type, scm_url, scm_branch, credential, organization):
-  prettyllog("manage", "project", name, organization, description)
+  prettyllog("manage", "project", name, organization, "-")
   getawxdata("projects")
   try:  
     projid = (awx_get_id("projects", name))
@@ -438,7 +437,7 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
        }
 
   if (projid == ""):
-    prettyllog("create", "project", name, organization, description)
+    prettyllog("create", "project", name, organization, "-")
     url ="https://ansible.openknowit.com/api/v2/projects/"
     resp = requests.post(url,headers=headers, json=data)
     if( resp.status_code == 200):
@@ -461,7 +460,7 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
           print("Project status unknown")
 
   else:
-    prettyllog("update", "project", name, organization, description)
+    prettyllog("update", "project", name, organization, "-")
     url ="https://ansible.openknowit.com/api/v2/projects/%s/" % projid
     resp = requests.put(url,headers=headers, json=data)
     if( resp.status_code == 200):
