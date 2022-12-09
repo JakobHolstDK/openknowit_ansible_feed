@@ -266,7 +266,11 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
   url ="https://ansible.openknowit.com/api/v2/schedules/"
   resp = requests.post(url,headers=headers, json=data)
   response = json.loads(resp.content)
-  prettyllog("manage", "schedule", name, organization, resp.status_code, response)
+  try:
+    schedid=response['id']
+    prettyllog("manage", "schedule", name, organization, resp.status_code, schedid)
+  except:
+    prettyllog("manage", "schedule", name, organization, resp.status_code, response)
 
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
@@ -318,7 +322,11 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   url = "https://ansible.openknowit.com/api/v2/job_templates/"
   resp = requests.post(url,headers=headers, json=data)
   response = json.loads(resp.content)
-  prettyllog("manage", "template", name, organization, resp.status_code, response)
+  try:
+    tmplid=response['id']
+    prettyllog("manage", "template", name, organization, resp.status_code, tmplid)
+  except:
+    prettyllog("manage", "template", name, organization, resp.status_code, response)
   getawxdata("job_templates")
 
   #associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
@@ -386,7 +394,11 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
     url = "https://ansible.openknowit.com/api/v2/credentials/"
     resp = requests.post(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "credential", name, organization, resp.status_code, response)
+    try:
+      credid=response['id']
+      prettyllog("manage", "credential", name, organization, resp.status_code, credid)
+    except:
+      prettyllog("manage", "credential", name, organization, resp.status_code, response)
   else:
     url = "https://ansible.openknowit.com/api/v2/credentials/%s/" % credid
     resp = requests.put(url,headers=headers, json=data)
@@ -434,7 +446,11 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
     url ="https://ansible.openknowit.com/api/v2/projects/"
     resp = requests.post(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "project", name, organization, resp.status_code, response)
+    try:
+      projid=response['id']
+      prettyllog("manage", "project", name, organization, resp.status_code, projid)
+    except:
+      prettyllog("manage", "project", name, organization, resp.status_code, response)
     #loop until project is synced
     loop = True
     while ( loop ):
