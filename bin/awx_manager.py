@@ -442,9 +442,9 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
     url ="https://ansible.openknowit.com/api/v2/projects/"
     resp = requests.post(url,headers=headers, json=data)
     if( resp.status_code == 200):
-      prettyllog("manage", "project", name, "-", "created")
+      prettyllog("manage", "project", name, organization, "created")
     if( resp.status_code == 400):
-      prettyllog("manage", "project", name, "-", "exists")
+      prettyllog("manage", "project", name, organization, "exists")
     #loop until project is synced
     loop = True
     while ( loop ):
@@ -464,9 +464,9 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
     url ="https://ansible.openknowit.com/api/v2/projects/%s/" % projid
     resp = requests.put(url,headers=headers, json=data)
     if( resp.status_code == 200):
-      prettyllog("manage", "project", name, "-", "updated")
+      prettyllog("manage", "project", name, organization, "updated")
     if( resp.status_code == 400):
-      prettyllog("manage", "project", name, "-", "up to date")
+      prettyllog("manage", "project", name, organization, "up to date")
     getawxdata("projects")
     try:
         projid = (awx_get_id("projects", name))
