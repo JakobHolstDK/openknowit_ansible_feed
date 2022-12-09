@@ -455,15 +455,15 @@ prettyllog("main", "start", "main", "", "Ansible automation")
 cfgfile = "etc/master.json"
 
 if (len(sys.argv) == 1):
-    print("Runnig standalone")
+  print("Runnig standalone")
+  prettyllog("main", "start", "main", "", "Running standalone : using local master config")
 else:
-    print("running custom config")
     if (sys.argv[1] == "master" ):
         cfgfile = "/opt/openknowit_ansibleautomation_feed/etc/master.json"
+        prettyllog("main", "start", "main", "master", "Running Running as daemon")
     if (sys.argv[1] == "custom" ):
+        prettyllog("main", "start", "main", "custom", "Running Running as daemon")
         cfgfile = "/opt/openknowit_ansibleautomation_main/etc/custom.json"
-
-print("Open config file %s " % cfgfile)
 
 f = open(cfgfile)
 config = json.loads(f.read())
