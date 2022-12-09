@@ -274,7 +274,6 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
 
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
-  tmplid = (awx_get_id("job_templates", name))
   orgid = (awx_get_id("organizations", organization))
   invid = (awx_get_id("inventories", inventory))
   projid = (awx_get_id("projects", project))
@@ -320,19 +319,19 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
 }
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
-  print(tmplid)
-  if (tmplid == ""):
-    url = "https://ansible.openknowit.com/api/v2/job_templates/"
-    resp = requests.post(url,headers=headers, json=data)
-  else:
+  url = "https://ansible.openknowit.com/api/v2/job_templates/"
+  resp = requests.post(url,headers=headers, json=data)
+  response = json.loads(resp.content)
+  tmplid = response['id']
+  if ( tmplid != "" ):
     url = "https://ansible.openknowit.com/api/v2/job_templates/%s/" % tmplid
     resp = requests.put(url,headers=headers, json=data)
-  response = json.loads(resp.content)
-  try:
-    tmplid=response['id']
-    prettyllog("manage", "template", name, organization, resp.status_code, tmplid)
-  except:
-    prettyllog("manage", "template", name, organization, resp.status_code, response)
+    response = json.loads(resp.content)
+    try:
+      tmplid=response['id']
+      prettyllog("manage", "template", name, organization, resp.status_code, tmplid)
+    except:
+      prettyllog("manage", "template", name, organization, resp.status_code, response)
   getawxdata("job_templates")
 
   #associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
