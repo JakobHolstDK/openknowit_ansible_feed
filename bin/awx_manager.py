@@ -9,10 +9,10 @@ import os
 import sys
 import datetime
 
-def prettyllog(function, action, item, organization, text):
+def prettyllog(function, action, item, organization, statuscode, text):
   d_date = datetime.datetime.now()
   reg_format_date = d_date.strftime("%Y-%m-%d %I:%M:%S %p")
-  print("%-20s: %-12s %-20s %-50s %-20s %-50s " %( reg_format_date, function,action,item,organization,text))
+  print("%-20s: %-12s %-20s %-50s %-20s %-4s %-50s " %( reg_format_date, function,action,item,organization,statuscode, text))
 
 class Hvac:
   def __init__(self):
@@ -60,11 +60,11 @@ class Hvac:
     )
 
 
-prettyllog("------------", "--------------------", "------------------------------------------", "--------------------", "--------------------------------------------------------------------------------------")
+prettyllog("------------", "--------------------", "------------------------------------------", "--------------------", "----", "--------------------------------------------------------------------------------------")
 
 vault = Hvac()
 if (vault.client.is_authenticated()):
-    prettyllog("init", "authenticate", "vault", "main", "OK")
+    prettyllog("init", "authenticate", "vault", "main", "000", "OK")
 else:
     exit
 
@@ -166,7 +166,7 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
     url ="https://ansible.openknowit.com/api/v2/inventories/"
     resp = requests.post(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "inventories", name, organization, response)
+    prettyllog("manage", "inventories", name, organization, resp.status_code, response)
     loop = True
     while ( loop ):
         getawxdata("inventories")
@@ -181,7 +181,7 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
   url ="https://ansible.openknowit.com/api/v2/inventories/%s/variable_data/" % invid
   resp = requests.put(url,headers=headers, json=variables)
   response = json.loads(resp.content)
-  prettyllog("manage", "inventories", name, organization, response)
+  prettyllog("manage", "inventories", name, organization, resp.status_code, response)
 
 
 def awx_create_host(name, description, inventory, organization):
@@ -203,9 +203,9 @@ def awx_create_host(name, description, inventory, organization):
   response = json.loads(resp.content)
   try:
     hostid=response['id']
-    prettyllog("manage", "host", name, organization, "Host %s created with id: %s" % (name, hostid ))
+    prettyllog("manage", "host", name, organization, resp.status_code, "Host %s created with id: %s" % (name, hostid ))
   except:
-    prettyllog("manage", "host", name, organization, response)
+    prettyllog("manage", "host", name, organization, resp.status_code, response)
 
 
 
@@ -231,9 +231,9 @@ def awx_create_organization(name, description, max_hosts, DEE, realm):
     response = json.loads(resp.content)
     try:
       orgid=response['id']
-      prettyllog("manage", "organization", name, realm, "organization %s created with id %s" % (orgid))
+      prettyllog("manage", "organization", name, realm, resp.status_code, "organization %s created with id %s" % (orgid))
     except:
-      prettyllog("manage", "organization", name, realm, response)
+      prettyllog("manage", "organization", name, realm, resp.status_code, response)
   else:    
     mytoken = ansibletoken['token']
     headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -245,7 +245,7 @@ def awx_create_organization(name, description, max_hosts, DEE, realm):
     url ="https://ansible.openknowit.com/api/v2/organizations/%s" % orgid
     resp = requests.put(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "organization", name, realm, response)
+    prettyllog("manage", "organization", name, realm, resp.status_code, response)
   getawxdata("organizations")
 
 
@@ -266,7 +266,7 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
   url ="https://ansible.openknowit.com/api/v2/schedules/"
   resp = requests.post(url,headers=headers, json=data)
   response = json.loads(resp.content)
-  prettyllog("manage", "schedule", name, organization, response)
+  prettyllog("manage", "schedule", name, organization, resp.status_code, response)
 
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
@@ -318,7 +318,7 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   url = "https://ansible.openknowit.com/api/v2/job_templates/"
   resp = requests.post(url,headers=headers, json=data)
   response = json.loads(resp.content)
-  prettyllog("manage", "template", name, organization, response)
+  prettyllog("manage", "template", name, organization, resp.status_code, response)
   getawxdata("job_templates")
 
   #associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
@@ -330,10 +330,10 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
 
 
 def awx_create_team(name, description, organization):
-  prettyllog("manage", "team", name, organization, "-")
+  prettyllog("manage", "team", name, organization, "000", "-")
 
 def awx_create_user(name, description, organization):
-  prettyllog("manage", "user", name, organization, "-")
+  prettyllog("manage", "user", name, organization, "000", "-")
 
 def awx_create_credential( name, description, credential_type, credentialuser, kind, organization ):
   try:
@@ -386,12 +386,12 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
     url = "https://ansible.openknowit.com/api/v2/credentials/"
     resp = requests.post(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "credential", name, organization, response)
+    prettyllog("manage", "credential", name, organization, resp.status_code, response)
   else:
     url = "https://ansible.openknowit.com/api/v2/credentials/%s/" % credid
     resp = requests.put(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "credential", name, organization, response)
+    prettyllog("manage", "credential", name, organization, resp.status_code, response)
   getawxdata("credentials")
 
 
@@ -431,11 +431,10 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
        }
 
   if (projid == ""):
-    prettyllog("create", "project", name, organization, "-")
     url ="https://ansible.openknowit.com/api/v2/projects/"
     resp = requests.post(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "project", name, organization, response)
+    prettyllog("manage", "project", name, organization, resp.status_code, response)
     #loop until project is synced
     loop = True
     while ( loop ):
@@ -455,7 +454,7 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
     url ="https://ansible.openknowit.com/api/v2/projects/%s/" % projid
     resp = requests.put(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "project", name, organization, response)
+    prettyllog("manage", "project", name, organization, resp.status_code, response)
     getawxdata("projects")
     try:
         projid = (awx_get_id("projects", name))
@@ -463,9 +462,9 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
         print("Unexpected error")
     projectinfo = awx_get_project(projid, organization)
     if( projectinfo['status'] == "successful"):
-      prettyllog("manage", "project", name, organization, "Project is ready")
+      prettyllog("manage", "project", name, organization, "000", "Project is ready")
     else:    
-      prettyllog("manage", "project", name, organization, "Project is not ready")
+      prettyllog("manage", "project", name, organization, "666", "Project is not ready")
   refresh_awx_data()
 
 
@@ -480,15 +479,15 @@ def refresh_awx_data():
 cfgfile = "etc/master.json"
 realm = "standalone"
 if (len(sys.argv) == 1):
-  prettyllog("init", "runtime", "config", "master", "Running standalone : using local master config")
+  prettyllog("init", "runtime", "config", "master", "001", "Running standalone : using local master config")
   realm = "standalone"
 else:
     if (sys.argv[1] == "master" ):
         cfgfile = "/opt/openknowit_ansibleautomation_feed/etc/master.json"
         realm="master"
-        prettyllog("init", "runtime", "config", "master", "Running Running as daemon")
+        prettyllog("init", "runtime", "config", "master", "002",  "Running Running as daemon")
     if (sys.argv[1] == "custom" ):
-        prettyllog("init", "runtime", "config", "custom", "Running Running as daemon")
+        prettyllog("init", "runtime", "config", "custom", "003" , "Running Running as daemon")
         cfgfile = "/opt/openknowit_ansibleautomation_main/etc/custom.json"
         realm="custom"
 
