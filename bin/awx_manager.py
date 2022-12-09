@@ -491,15 +491,15 @@ def refresh_awx_data():
 cfgfile = "etc/master.json"
 realm = "standalone"
 if (len(sys.argv) == 1):
-  prettyllog("main", "start", "main", "master", "Running standalone : using local master config")
+  prettyllog("init", "runtime", "config", "master", "Running standalone : using local master config")
   realm = "standalone"
 else:
     if (sys.argv[1] == "master" ):
         cfgfile = "/opt/openknowit_ansibleautomation_feed/etc/master.json"
         realm="master"
-        prettyllog("main", "start", "main", "master", "Running Running as daemon")
+        prettyllog("init", "runtime", "config", "master", "Running Running as daemon")
     if (sys.argv[1] == "custom" ):
-        prettyllog("main", "start", "main", "custom", "Running Running as daemon")
+        prettyllog("init", "runtime", "config", "custom", "Running Running as daemon")
         cfgfile = "/opt/openknowit_ansibleautomation_main/etc/custom.json"
         realm="custom"
 
