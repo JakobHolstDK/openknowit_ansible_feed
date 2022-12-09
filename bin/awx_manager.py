@@ -197,7 +197,6 @@ def awx_create_host(name, description, inventory, organization):
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   url ="https://ansible.openknowit.com/api/v2/hosts/"
   resp = requests.post(url,headers=headers, json=data)
-
   if( resp.status_code == 200):
     prettyllog("manage", "host", name, organization, "Host created")
   if( resp.status_code == 400):
@@ -225,6 +224,10 @@ def awx_create_organization(name, description, max_hosts, DEE):
          }
     url ="https://ansible.openknowit.com/api/v2/organizations/"
     resp = requests.post(url,headers=headers, json=data)
+    if( resp.status_code == 200):
+      prettyllog("manage", "organization", name, "-", "created")
+    if( resp.status_code == 400):
+      prettyllog("manage", "organization", name, "-", "create failed")
   else:    
     mytoken = ansibletoken['token']
     headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -235,6 +238,11 @@ def awx_create_organization(name, description, max_hosts, DEE):
          }
     url ="https://ansible.openknowit.com/api/v2/organizations/%s" % orgid
     resp = requests.put(url,headers=headers, json=data)
+    if( resp.status_code == 200):
+      prettyllog("manage", "organization", name, "-", "updated")
+    if( resp.status_code == 400):
+      prettyllog("manage", "organization", name, "-", "not updated")
+
   getawxdata("organizations")
 
 
