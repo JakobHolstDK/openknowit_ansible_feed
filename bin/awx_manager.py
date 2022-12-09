@@ -462,7 +462,6 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
           print("Project status unknown")
 
   else:
-    prettyllog("update", "project", name, organization, "-")
     url ="https://ansible.openknowit.com/api/v2/projects/%s/" % projid
     resp = requests.put(url,headers=headers, json=data)
     if( resp.status_code == 200):
@@ -490,7 +489,6 @@ def refresh_awx_data():
 
 # Main:  start
 ########################################################################################################################
-prettyllog("main", "start", "main", "", "Ansible automation")
 cfgfile = "etc/master.json"
 
 if (len(sys.argv) == 1):
