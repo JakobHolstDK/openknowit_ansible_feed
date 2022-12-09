@@ -328,9 +328,9 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
     resp = requests.put(url,headers=headers, json=data)
   response = json.loads(resp.content)
   try:
-    tmplid=response['id']
-    prettyllog("manage", "template", name, organization, resp.status_code, tmplid)
-    prettyllog("manage", "template", name, organization, resp.status_code, response)
+    newcredid=response['credential']
+    prettyllog("manage", "template", name, organization, resp.status_code, credid)
+    prettyllog("manage", "template", name, organization, resp.status_code, newcredid)
   except:
     prettyllog("manage", "template", name, organization, resp.status_code, response)
   getawxdata("job_templates")
