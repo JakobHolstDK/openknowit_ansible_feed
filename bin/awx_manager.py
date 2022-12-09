@@ -447,7 +447,6 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
 
 
 def refresh_awx_data():
-  print("refresh data from awx")
   items = {"organizations", "projects", "credentials", "hosts", "inventories", "credential_types", "labels" , "instance_groups", "job_templates"}    
   for item in items:
     getawxdata(item)
