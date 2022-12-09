@@ -470,7 +470,11 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
     url ="https://ansible.openknowit.com/api/v2/projects/%s/" % projid
     resp = requests.put(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "project", name, organization, resp.status_code, response)
+    try:  
+      projid = (awx_get_id("projects", name))
+      prettyllog("manage", "project", name, organization, resp.status_code, projid)
+    except:
+      prettyllog("manage", "project", name, organization, resp.status_code, response)
     getawxdata("projects")
     try:
         projid = (awx_get_id("projects", name))
