@@ -226,8 +226,6 @@ def awx_create_organization(name, description, max_hosts, DEE):
     resp = requests.post(url,headers=headers, json=data)
     if( resp.status_code == 200):
       prettyllog("manage", "organization", name, "-", "created")
-    if( resp.status_code == 400):
-      prettyllog("manage", "organization", name, "-", "create failed")
   else:    
     mytoken = ansibletoken['token']
     headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -241,7 +239,7 @@ def awx_create_organization(name, description, max_hosts, DEE):
     if( resp.status_code == 200):
       prettyllog("manage", "organization", name, "-", "updated")
     if( resp.status_code == 400):
-      prettyllog("manage", "organization", name, "-", "not updated")
+      prettyllog("manage", "organization", name, "-", "up to date")
 
   getawxdata("organizations")
 
@@ -262,6 +260,10 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
     }
   url ="https://ansible.openknowit.com/api/v2/schedules/"
   resp = requests.post(url,headers=headers, json=data)
+  if( resp.status_code == 200):
+    prettyllog("manage", "schedule", name, "-", "created")
+  if( resp.status_code == 400):
+    prettyllog("manage", "schedule", name, "-", "exists")
 
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
@@ -313,8 +315,11 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   url = "https://ansible.openknowit.com/api/v2/job_templates/"
   resp = requests.post(url,headers=headers, json=data)
+  if( resp.status_code == 200):
+    prettyllog("manage", "template", name, "-", "created")
+  if( resp.status_code == 400):
+    prettyllog("manage", "template", name, "-", "exists")
   getawxdata("job_templates")
-  jobid = awx_get_id("job_templates", name)
 
   #associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
   #print(associatecommand)
@@ -382,9 +387,17 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
   if ( credid == ""):
     url = "https://ansible.openknowit.com/api/v2/credentials/"
     resp = requests.post(url,headers=headers, json=data)
+    if( resp.status_code == 200):
+      prettyllog("manage", "credential", name, "-", "created")
+    if( resp.status_code == 400):
+      prettyllog("manage", "credential", name, "-", "exists")
   else:
     url = "https://ansible.openknowit.com/api/v2/credentials/%s/" % credid
     resp = requests.put(url,headers=headers, json=data)
+    if( resp.status_code == 200):
+      prettyllog("manage", "credential", name, "-", "updated")
+    if( resp.status_code == 400):
+      prettyllog("manage", "credential", name, "-", "up to date")
   getawxdata("credentials")
 
 
@@ -428,6 +441,10 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
     prettyllog("create", "project", name, organization, description)
     url ="https://ansible.openknowit.com/api/v2/projects/"
     resp = requests.post(url,headers=headers, json=data)
+    if( resp.status_code == 200):
+      prettyllog("manage", "project", name, "-", "created")
+    if( resp.status_code == 400):
+      prettyllog("manage", "project", name, "-", "exists")
     #loop until project is synced
     loop = True
     while ( loop ):
@@ -447,6 +464,10 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
     prettyllog("update", "project", name, organization, description)
     url ="https://ansible.openknowit.com/api/v2/projects/%s/" % projid
     resp = requests.put(url,headers=headers, json=data)
+    if( resp.status_code == 200):
+      prettyllog("manage", "project", name, "-", "updated")
+    if( resp.status_code == 400):
+      prettyllog("manage", "project", name, "-", "up to date")
     getawxdata("projects")
     try:
         projid = (awx_get_id("projects", name))
