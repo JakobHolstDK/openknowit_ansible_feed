@@ -411,7 +411,7 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
        }
 
   if (projid == ""):
-    print("Creating a new project")
+    prettyllog("create", "project", name, organization, description)
     url ="https://ansible.openknowit.com/api/v2/projects/"
     resp = requests.post(url,headers=headers, json=data)
     #loop until project is synced
@@ -430,7 +430,7 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
           print("Project status unknown")
 
   else:
-    print("Updating project %s " % name)
+    prettyllog("update", "project", name, organization, description)
     url ="https://ansible.openknowit.com/api/v2/projects/%s/" % projid
     resp = requests.put(url,headers=headers, json=data)
     getawxdata("projects")
