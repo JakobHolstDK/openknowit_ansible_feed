@@ -213,7 +213,7 @@ def awx_create_host(name, description, inventory, organization):
 
 
 
-def awx_create_organization(name, description, max_hosts, DEE):
+def awx_create_organization(name, description, max_hosts, DEE, realm):
   try:  
     orgid = (awx_get_id("organizations", name))
   except:
@@ -229,7 +229,7 @@ def awx_create_organization(name, description, max_hosts, DEE):
     url ="https://ansible.openknowit.com/api/v2/organizations/"
     resp = requests.post(url,headers=headers, json=data)
     if( resp.status_code == 200):
-      prettyllog("manage", "organization", name, "-", "created")
+      prettyllog("manage", "organization", name, realm, "created")
   else:    
     mytoken = ansibletoken['token']
     headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -495,10 +495,12 @@ if (len(sys.argv) == 1):
 else:
     if (sys.argv[1] == "master" ):
         cfgfile = "/opt/openknowit_ansibleautomation_feed/etc/master.json"
+        realm="master"
         prettyllog("main", "start", "main", "master", "Running Running as daemon")
     if (sys.argv[1] == "custom" ):
         prettyllog("main", "start", "main", "custom", "Running Running as daemon")
         cfgfile = "/opt/openknowit_ansibleautomation_main/etc/custom.json"
+        realm="custom"
 
 f = open(cfgfile)
 config = json.loads(f.read())
@@ -512,7 +514,7 @@ for org in (config['organization']):
   max_hosts = org['max_hosts']
   default_environment = org['default_environment']
   description = org['description']
-  awx_create_organization(orgname, description, max_hosts, default_environment)
+  awx_create_organizatioawx_create_organizationn(orgname, description, max_hosts, default_environment, realm)
   getawxdata("organizations")
   orgid = awx_get_id("organizations", orgname)
   loop = True
