@@ -7,6 +7,7 @@ import requests
 import hvac
 import os
 import sys
+import datetime
 
 
 class Hvac:
@@ -436,6 +437,10 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
         print ("project %s  is ok" % name )
   refresh_awx_data()
 
+def prettyllog(function, action, item, organization, text):
+  d_date = datetime.datetime.now()
+  reg_format_date = d_date.strftime("%Y-%m-%d %I:%M:%S %p")
+  print("%-20s" %( reg_format_date))
 
 def refresh_awx_data():
   print("refresh data from awx")
@@ -446,7 +451,7 @@ def refresh_awx_data():
 
 # Main:  start
 ########################################################################################################################
-
+prettyllog("main", "start", "main", "", "", "Ansible automation" )
 cfgfile = "etc/master.json"
 
 if (len(sys.argv) == 1):
