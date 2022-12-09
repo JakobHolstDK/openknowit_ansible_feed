@@ -322,16 +322,17 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   url = "https://ansible.openknowit.com/api/v2/job_templates/"
   resp = requests.post(url,headers=headers, json=data)
   response = json.loads(resp.content)
-  tmplid = response['id']
+  getawxdata("job_templates")
+  tmplid = awx_get_id("job_templates", name )
   if ( tmplid != "" ):
     url = "https://ansible.openknowit.com/api/v2/job_templates/%s/" % tmplid
     resp = requests.put(url,headers=headers, json=data)
     response = json.loads(resp.content)
     try:
       tmplid=response['id']
-      prettyllog("manage", "template", name, organization, resp.status_code, tmplid)
+      prettyllog("update", "template", name, organization, resp.status_code, tmplid)
     except:
-      prettyllog("manage", "template", name, organization, resp.status_code, response)
+      prettyllog("update", "template", name, organization, resp.status_code, response)
   getawxdata("job_templates")
 
   #associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
