@@ -9,6 +9,10 @@ import os
 import sys
 import datetime
 
+def prettyllog(function, action, item, organization, text):
+  d_date = datetime.datetime.now()
+  reg_format_date = d_date.strftime("%Y-%m-%d %I:%M:%S %p")
+  print("%-20s: %-20s %-20s %-20s %-20s %-20s " %( reg_format_date, function,action,item,organization,text))
 
 class Hvac:
   def __init__(self):
@@ -58,7 +62,7 @@ class Hvac:
 
 vault = Hvac()
 if (vault.client.is_authenticated()):
-    print("We are in the vault")
+    prettyllog("main", "start", "main", "vault", "We are in the vault")
 else:
     exit
 
@@ -129,6 +133,7 @@ def awx_purge_orphans():
     awx_delete(mykey[1],mykey[3])
 
 def awx_create_label(name, organization):
+  prettyllog("manage", "label", name, organization, description)
   orgid = (awx_get_id("organizations", organization))
   if ( orgid != "" ):
     data = {
@@ -143,7 +148,7 @@ def awx_create_label(name, organization):
 
 
 def awx_create_inventory(name, description, organization, inventorytype, variables):
-  print("Creating inventory %s description: %s for organization %s " % (name, description, organization))
+  prettyllog("manage", "inventory", name, organization, description)
   try:  
     invid = (awx_get_id("inventories", name))
   except:
@@ -176,7 +181,7 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
 
 
 def awx_create_host(name, description, inventory, organization):
-  print("Create host name: %s Desc: %s Inventory %s Org %s" % (name, description, inventory, organization) )
+  prettyllog("manage", "host", name, "", description)
   try:  
     invid = (awx_get_id("inventories", inventory))
   except:
@@ -199,7 +204,7 @@ def awx_create_host(name, description, inventory, organization):
 
 
 def awx_create_organization(name, description, max_hosts, DEE):
-  print("Creating org %s Description: %s " % (name, description) )
+  prettyllog("manage", "organization", name, "", description)
   try:  
     orgid = (awx_get_id("organizations", name))
   except:
@@ -228,6 +233,7 @@ def awx_create_organization(name, description, max_hosts, DEE):
 
 
 def awx_create_schedule(name, unified_job_template,  description, tz, start, run_frequency, run_every, end, scheduletype):
+  prettyllog("manage", "schedule", name, "", description)
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   # The scheduling is tricky and must be refined
@@ -245,6 +251,7 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
 
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
+  prettyllog("manage", "template", name, organization, description)
   orgid = (awx_get_id("organizations", organization))
   invid = (awx_get_id("inventories", inventory))
   projid = (awx_get_id("projects", project))
@@ -303,14 +310,14 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   #
 
 
-def awx_create_team():
-  print("create team")
+def awx_create_team(name, description, organization):
+  prettyllog("manage", "team", name, organization, description)
 
-def awx_create_user():
-  print("create team")
+def awx_create_user(name, description, organization):
+  prettyllog("manage", "user", name, organization, description)
 
 def awx_create_credential( name, description, credential_type, credentialuser, kind, organization ):
-  print("Create credential %s description: %s type %s for %s" % (name, description, credential_type, organization))
+  prettyllog("manage", "credential", name, organization, description)
   try:
     credid = (awx_get_id("credentials", name))
   except:
@@ -383,6 +390,7 @@ def awx_get_project(projid, organization):
   return   json.loads(resp.content)
   
 def awx_create_project(name, description, scm_type, scm_url, scm_branch, credential, organization):
+  prettyllog("manage", "project", name, organization, description)
   getawxdata("projects")
   try:  
     projid = (awx_get_id("projects", name))
@@ -437,10 +445,6 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
         print ("project %s  is ok" % name )
   refresh_awx_data()
 
-def prettyllog(function, action, item, organization, text):
-  d_date = datetime.datetime.now()
-  reg_format_date = d_date.strftime("%Y-%m-%d %I:%M:%S %p")
-  print("%-20s: %-20s %-20s %-20s %-20s %-20s " %( reg_format_date, function,action,item,organization,text))
 
 def refresh_awx_data():
   print("refresh data from awx")
@@ -455,7 +459,6 @@ prettyllog("main", "start", "main", "", "Ansible automation")
 cfgfile = "etc/master.json"
 
 if (len(sys.argv) == 1):
-  print("Runnig standalone")
   prettyllog("main", "start", "main", "", "Running standalone : using local master config")
 else:
     if (sys.argv[1] == "master" ):
@@ -468,9 +471,7 @@ else:
 f = open(cfgfile)
 config = json.loads(f.read())
 f.close
-
 refresh_awx_data()
-print("Iterate over organizations")
 
 for org in (config['organization']):
   orgname = org['name']
@@ -487,10 +488,7 @@ for org in (config['organization']):
     orgdata = awx_get_organization(orgid)
     if ( orgdata['name'] == orgname ):
       loop = False
-  print("Organization is stable")
   refresh_awx_data()
-
-  print("load data from configfile")
 
   projects = org['projects']
   credentials = org['credentials']
@@ -500,9 +498,6 @@ for org in (config['organization']):
   labels = org['labels']
   templates = org['templates']
   schedules = org['schedules']
-
-
-
 
   for credential in credentials:
     credentialname = credential['name']
@@ -520,9 +515,6 @@ for org in (config['organization']):
         if ( credid != "" ):
           loop = False
           print("We have an ID called %s" % credid)
-
-
-
 
   for project in projects:
     projectname = project['name']
@@ -555,7 +547,6 @@ for org in (config['organization']):
     for hostinventory in hostinventories: 
       awx_create_host(hostname, hostdesc, hostinventory, orgname)
 
-
   for template in templates:
     templatename = template['name']
     templatedescription = template['description']
@@ -567,20 +558,15 @@ for org in (config['organization']):
     templateplaybook = template['playbook']
     awx_create_template(templatename, templatedescription, templatejob_type, templateinventory, templateproject, templateEE, templatecredential, templateplaybook, orgname)
 
-
   for schedule in schedules:
     schedulename = schedule['name']
-
     if ( schedule['type'] == "job"):
       templatename = schedule['template']
       unified_job_template_id = awx_get_id("job_templates", templatename)
-
     if ( schedule['type'] == "project"):
       projectname = schedule['project']
       unified_job_template_id = awx_get_id("projects", projectname)
-
     tz = schedule['local_time_zone']
-
     if ( schedule ['start'] == "now" ):
       dtstart = { 
         "year": "2012",
@@ -590,14 +576,10 @@ for org in (config['organization']):
         "minute": "00",
         "second": "00"
         }
-
     if ( int(schedule['run_every_minute']) ):
       scheduletype="Normal"
       run_frequency =  schedule['run_every_minute']
       run_every = "MINUTELY"
-  
     if ( schedule ['end'] == "never" ):
       dtend = "null"
     awx_create_schedule(schedulename, unified_job_template_id, description,tz, dtstart, run_frequency, run_every, dtend, scheduletype)
-
-      
