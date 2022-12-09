@@ -335,7 +335,7 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
       prettyllog("update", "template", name, organization, resp.status_code, response)
   getawxdata("job_templates")
 
-  associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
+  associatecommand = "awx job_template associate %s --credential %s" % ( tmplid, credid)
   os.system(associatecommand)
   #
 
