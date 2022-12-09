@@ -489,7 +489,7 @@ def refresh_awx_data():
 # Main:  start
 ########################################################################################################################
 cfgfile = "etc/master.json"
-
+realm = "standalone"
 if (len(sys.argv) == 1):
   prettyllog("main", "start", "main", "master", "Running standalone : using local master config")
   realm = "standalone"
