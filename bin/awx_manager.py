@@ -142,7 +142,7 @@ def awx_create_label(name, organization):
 
 
 def awx_create_inventory(name, description, organization, inventorytype, variables):
-  print("Creating inventory")
+  print("Creating inventory %s description: %s for organization %s " % (name, description, organization))
   try:  
     invid = (awx_get_id("inventories", name))
   except:
@@ -172,10 +172,6 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   url ="https://ansible.openknowit.com/api/v2/inventories/%s/variable_data/" % invid
   resp = requests.put(url,headers=headers, json=variables)
-  print(resp.content)
-
-
-
 
 
 def awx_create_host(name, description, inventory, organization):
@@ -202,7 +198,7 @@ def awx_create_host(name, description, inventory, organization):
 
 
 def awx_create_organization(name, description, max_hosts, DEE):
-  print("Creating org")
+  print("Creating org %s Description: %s " % (name, description) )
   try:  
     orgid = (awx_get_id("organizations", name))
   except:
@@ -298,11 +294,11 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   getawxdata("job_templates")
   jobid = awx_get_id("job_templates", name)
 
-  associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
-  print(associatecommand)
+  #associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
+  #print(associatecommand)
   #
   # This shouldnt be a command but i cant find the rest api call
-  os.system(associatecommand)
+  #os.system(associatecommand)
   #
 
 
@@ -313,6 +309,7 @@ def awx_create_user():
   print("create team")
 
 def awx_create_credential( name, description, credential_type, credentialuser, kind, organization ):
+  print("Create credential %s description: %s type %s for %s" % (name, description, credential_type, organization))
   try:
     credid = (awx_get_id("credentials", name))
   except:
@@ -444,7 +441,6 @@ def refresh_awx_data():
   print("refresh data from awx")
   items = {"organizations", "projects", "credentials", "hosts", "inventories", "credential_types", "labels" , "instance_groups", "job_templates"}    
   for item in items:
-    print("Refreshing %s" % item)
     getawxdata(item)
 
 
@@ -551,10 +547,6 @@ for org in (config['organization']):
     hostname = host['name']
     hostdesc = host['description']
     hostinventories = host['inventories']
-    print("---------------------------")
-    print(hostinventories)
-    print("---------------------------")
-
     for hostinventory in hostinventories: 
       awx_create_host(hostname, hostdesc, hostinventory, orgname)
 
