@@ -181,7 +181,7 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
 
 
 def awx_create_host(name, description, inventory, organization):
-  prettyllog("manage", "host", name, "", description)
+  prettyllog("manage", "host", name, organization, description)
   try:  
     invid = (awx_get_id("inventories", inventory))
   except:
@@ -204,7 +204,7 @@ def awx_create_host(name, description, inventory, organization):
 
 
 def awx_create_organization(name, description, max_hosts, DEE):
-  prettyllog("manage", "organization", name, "", description)
+  prettyllog("manage", "organization", name, "-", description)
   try:  
     orgid = (awx_get_id("organizations", name))
   except:
@@ -233,7 +233,7 @@ def awx_create_organization(name, description, max_hosts, DEE):
 
 
 def awx_create_schedule(name, unified_job_template,  description, tz, start, run_frequency, run_every, end, scheduletype):
-  prettyllog("manage", "schedule", name, "", description)
+  prettyllog("manage", "schedule", name, "-", description)
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   # The scheduling is tricky and must be refined
