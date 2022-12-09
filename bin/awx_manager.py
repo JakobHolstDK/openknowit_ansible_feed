@@ -574,7 +574,7 @@ for org in (config['organization']):
     inventorydesc = inventory['description']
     inventorytype = inventory['type']
     inventoryvariables = inventory['variables']
-    awx_create_inventory(inventoryname, inventorydesc, orgname, inventorytype, inventoryvariables, orgname)
+    awx_create_inventory(inventoryname, inventorydesc, orgname, inventorytype, inventoryvariables)
 
   for host in hosts:
     hostname = host['name']
