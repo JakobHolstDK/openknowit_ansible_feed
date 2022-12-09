@@ -403,7 +403,11 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
     url = "https://ansible.openknowit.com/api/v2/credentials/%s/" % credid
     resp = requests.put(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "credential", name, organization, resp.status_code, response)
+    try:
+      credid=response['id']
+      prettyllog("manage", "credential", name, organization, resp.status_code, credid)
+    except:
+      prettyllog("manage", "credential", name, organization, resp.status_code, response)
   getawxdata("credentials")
 
 
