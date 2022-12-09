@@ -335,11 +335,8 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
       prettyllog("update", "template", name, organization, resp.status_code, response)
   getawxdata("job_templates")
 
-  #associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
-  #print(associatecommand)
-  #
-  # This shouldnt be a command but i cant find the rest api call
-  #os.system(associatecommand)
+  associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
+  os.system(associatecommand)
   #
 
 
