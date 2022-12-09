@@ -12,7 +12,7 @@ import datetime
 def prettyllog(function, action, item, organization, text):
   d_date = datetime.datetime.now()
   reg_format_date = d_date.strftime("%Y-%m-%d %I:%M:%S %p")
-  print("%-20s: %-20s %-40s %-20s %-20s %-20s " %( reg_format_date, function,action,item,organization,text))
+  print("%-20s: %-20s %-20s %-50s %-20s %-50s " %( reg_format_date, function,action,item,organization,text))
 
 class Hvac:
   def __init__(self):
@@ -440,9 +440,9 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
         print("Unexpected error")
     projectinfo = awx_get_project(projid, organization)
     if( projectinfo['status'] == "successful"):
-        print ("project %s  is ok"  % name )
+      prettyllog("manage", "project", name, organization, "Project is ready")
     else:    
-        print ("project %s  is ok" % name )
+      prettyllog("manage", "project", name, organization, "Project is not ready")
   refresh_awx_data()
 
 
