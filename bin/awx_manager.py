@@ -165,10 +165,8 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
     headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
     url ="https://ansible.openknowit.com/api/v2/inventories/"
     resp = requests.post(url,headers=headers, json=data)
-    if( resp.status_code == 200):
-      prettyllog("manage", "inventories", name, organization, "created")
-    if( resp.status_code == 400):
-      prettyllog("manage", "inventories", name, organization, "exists")
+    response = json.loads(resp.content)
+    prettyllog("manage", "inventories", name, organization, response)
     loop = True
     while ( loop ):
         getawxdata("inventories")
@@ -182,10 +180,8 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   url ="https://ansible.openknowit.com/api/v2/inventories/%s/variable_data/" % invid
   resp = requests.put(url,headers=headers, json=variables)
-  if( resp.status_code == 200):
-    prettyllog("manage", "inventories", name, organization, "updated")
-  if( resp.status_code == 400):
-    prettyllog("manage", "inventories", name, organization, "exists")
+  response = json.loads(resp.content)
+  prettyllog("manage", "inventories", name, organization, response)
 
 
 def awx_create_host(name, description, inventory, organization):
@@ -228,8 +224,8 @@ def awx_create_organization(name, description, max_hosts, DEE, realm):
          }
     url ="https://ansible.openknowit.com/api/v2/organizations/"
     resp = requests.post(url,headers=headers, json=data)
-    if( resp.status_code == 200):
-      prettyllog("manage", "organization", name, realm, "created")
+    response = json.loads(resp.content)
+    prettyllog("manage", "organization", name, realm, response)
   else:    
     mytoken = ansibletoken['token']
     headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -240,11 +236,8 @@ def awx_create_organization(name, description, max_hosts, DEE, realm):
          }
     url ="https://ansible.openknowit.com/api/v2/organizations/%s" % orgid
     resp = requests.put(url,headers=headers, json=data)
-    if( resp.status_code == 200):
-      prettyllog("manage", "organization", name, realm, "updated")
-    if( resp.status_code == 400):
-      prettyllog("manage", "organization", name, realm, "up to date")
-
+    response = json.loads(resp.content)
+    prettyllog("manage", "organization", name, realm, response)
   getawxdata("organizations")
 
 
@@ -264,10 +257,8 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
 
   url ="https://ansible.openknowit.com/api/v2/schedules/"
   resp = requests.post(url,headers=headers, json=data)
-  if( resp.status_code == 200):
-    prettyllog("manage", "schedule", name, organization, "created")
-  if( resp.status_code == 400):
-    prettyllog("manage", "schedule", name, organization, "exists")
+  response = json.loads(resp.content)
+  prettyllog("manage", "schedule", name, organization, response)
 
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
@@ -318,10 +309,8 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   url = "https://ansible.openknowit.com/api/v2/job_templates/"
   resp = requests.post(url,headers=headers, json=data)
-  if( resp.status_code == 200):
-    prettyllog("manage", "template", name, organization, "created")
-  if( resp.status_code == 400):
-    prettyllog("manage", "template", name, organization, "exists")
+  response = json.loads(resp.content)
+  prettyllog("manage", "template", name, organization, response)
   getawxdata("job_templates")
 
   #associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
@@ -388,17 +377,13 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
   if ( credid == ""):
     url = "https://ansible.openknowit.com/api/v2/credentials/"
     resp = requests.post(url,headers=headers, json=data)
-    if( resp.status_code == 200):
-      prettyllog("manage", "credential", name, organization, "created")
-    if( resp.status_code == 400):
-      prettyllog("manage", "credential", name, organization, "exists")
+    response = json.loads(resp.content)
+    prettyllog("manage", "credential", name, organization, response)
   else:
     url = "https://ansible.openknowit.com/api/v2/credentials/%s/" % credid
     resp = requests.put(url,headers=headers, json=data)
-    if( resp.status_code == 200):
-      prettyllog("manage", "credential", name, organization, "updated")
-    if( resp.status_code == 400):
-      prettyllog("manage", "credential", name, organization, "up to date")
+    response = json.loads(resp.content)
+    prettyllog("manage", "credential", name, organization, response)
   getawxdata("credentials")
 
 
@@ -441,10 +426,8 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
     prettyllog("create", "project", name, organization, "-")
     url ="https://ansible.openknowit.com/api/v2/projects/"
     resp = requests.post(url,headers=headers, json=data)
-    if( resp.status_code == 200):
-      prettyllog("manage", "project", name, organization, "created")
-    if( resp.status_code == 400):
-      prettyllog("manage", "project", name, organization, "exists")
+    response = json.loads(resp.content)
+    prettyllog("manage", "project", name, organization, response)
     #loop until project is synced
     loop = True
     while ( loop ):
@@ -463,10 +446,8 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
   else:
     url ="https://ansible.openknowit.com/api/v2/projects/%s/" % projid
     resp = requests.put(url,headers=headers, json=data)
-    if( resp.status_code == 200):
-      prettyllog("manage", "project", name, organization, "updated")
-    if( resp.status_code == 400):
-      prettyllog("manage", "project", name, organization, "up to date")
+    response = json.loads(resp.content)
+    prettyllog("manage", "project", name, organization, response)
     getawxdata("projects")
     try:
         projid = (awx_get_id("projects", name))
