@@ -451,7 +451,7 @@ def refresh_awx_data():
 
 # Main:  start
 ########################################################################################################################
-prettyllog("main", "start", "main", "", "", "Ansible automation" )
+prettyllog("main", "start", "main", "", "Ansible automation")
 cfgfile = "etc/master.json"
 
 if (len(sys.argv) == 1):
