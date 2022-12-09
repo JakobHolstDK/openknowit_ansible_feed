@@ -319,9 +319,9 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   url = "https://ansible.openknowit.com/api/v2/job_templates/"
   resp = requests.post(url,headers=headers, json=data)
   if( resp.status_code == 200):
-    prettyllog("manage", "template", name, "-", "created")
+    prettyllog("manage", "template", name, organization, "created")
   if( resp.status_code == 400):
-    prettyllog("manage", "template", name, "-", "exists")
+    prettyllog("manage", "template", name, organization, "exists")
   getawxdata("job_templates")
 
   #associatecommand = "awx job_template associate %s --credential %s" % ( jobid, credid)
