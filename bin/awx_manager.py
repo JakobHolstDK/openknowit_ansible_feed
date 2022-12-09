@@ -133,7 +133,6 @@ def awx_purge_orphans():
     awx_delete(mykey[1],mykey[3])
 
 def awx_create_label(name, organization):
-  prettyllog("manage", "label", name, organization, description)
   orgid = (awx_get_id("organizations", organization))
   if ( orgid != "" ):
     data = {
@@ -272,7 +271,6 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
 
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
-  prettyllog("manage", "template", name, organization, "-")
   orgid = (awx_get_id("organizations", organization))
   invid = (awx_get_id("inventories", inventory))
   projid = (awx_get_id("projects", project))
@@ -421,7 +419,6 @@ def awx_get_project(projid, organization):
   return   json.loads(resp.content)
   
 def awx_create_project(name, description, scm_type, scm_url, scm_branch, credential, organization):
-  prettyllog("manage", "project", name, organization, "-")
   getawxdata("projects")
   try:  
     projid = (awx_get_id("projects", name))
