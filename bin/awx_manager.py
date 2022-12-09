@@ -148,7 +148,6 @@ def awx_create_label(name, organization):
 
 
 def awx_create_inventory(name, description, organization, inventorytype, variables):
-  prettyllog("manage", "inventory", name, organization, "-")
   try:  
     invid = (awx_get_id("inventories", name))
   except:
@@ -165,6 +164,10 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
     headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
     url ="https://ansible.openknowit.com/api/v2/inventories/"
     resp = requests.post(url,headers=headers, json=data)
+    if( resp.status_code == 200):
+      prettyllog("manage", "inventories", name, organization, "created")
+    if( resp.status_code == 400):
+      prettyllog("manage", "inventories", name, organization, "exists")
     loop = True
     while ( loop ):
         getawxdata("inventories")
@@ -178,10 +181,13 @@ def awx_create_inventory(name, description, organization, inventorytype, variabl
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   url ="https://ansible.openknowit.com/api/v2/inventories/%s/variable_data/" % invid
   resp = requests.put(url,headers=headers, json=variables)
+  if( resp.status_code == 200):
+    prettyllog("manage", "inventories", name, organization, "updated")
+  if( resp.status_code == 400):
+    prettyllog("manage", "inventories", name, organization, "exists")
 
 
 def awx_create_host(name, description, inventory, organization):
-  prettyllog("manage", "host", name, organization, "-")
   try:  
     invid = (awx_get_id("inventories", inventory))
   except:
@@ -198,9 +204,9 @@ def awx_create_host(name, description, inventory, organization):
   url ="https://ansible.openknowit.com/api/v2/hosts/"
   resp = requests.post(url,headers=headers, json=data)
   if( resp.status_code == 200):
-    prettyllog("manage", "host", name, organization, "Host created")
+    prettyllog("manage", "host", name, organization, "created")
   if( resp.status_code == 400):
-    prettyllog("manage", "host", name, organization, "Host exists ")
+    prettyllog("manage", "host", name, organization, "exists")
 
 
 
@@ -209,7 +215,6 @@ def awx_create_host(name, description, inventory, organization):
 
 
 def awx_create_organization(name, description, max_hosts, DEE):
-  prettyllog("manage", "organization", name, "-", "-")
   try:  
     orgid = (awx_get_id("organizations", name))
   except:
@@ -244,8 +249,7 @@ def awx_create_organization(name, description, max_hosts, DEE):
   getawxdata("organizations")
 
 
-def awx_create_schedule(name, unified_job_template,  description, tz, start, run_frequency, run_every, end, scheduletype):
-  prettyllog("manage", "schedule", name, "-", "-")
+def awx_create_schedule(name, unified_job_template,  description, tz, start, run_frequency, run_every, end, scheduletype, organization):
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   # The scheduling is tricky and must be refined
@@ -258,12 +262,13 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
       "dtstart": start['year'] + "-" + start['month'] + "-" + start['day'] + "T" + start['hour'] + ":" + start['minute'] + ":" + start['second']  + "Z",
       "rrule": "DTSTART;TZID=" + tz + ":" + start['year'] + start['month'] + start['day'] + "T" + start['hour'] + start['minute'] + start['second'] +" RRULE:INTERVAL=" + run_frequency + ";FREQ=" + run_every
     }
+
   url ="https://ansible.openknowit.com/api/v2/schedules/"
   resp = requests.post(url,headers=headers, json=data)
   if( resp.status_code == 200):
-    prettyllog("manage", "schedule", name, "-", "created")
+    prettyllog("manage", "schedule", name, organization, "created")
   if( resp.status_code == 400):
-    prettyllog("manage", "schedule", name, "-", "exists")
+    prettyllog("manage", "schedule", name, organization, "exists")
 
 
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
@@ -569,7 +574,7 @@ for org in (config['organization']):
     inventorydesc = inventory['description']
     inventorytype = inventory['type']
     inventoryvariables = inventory['variables']
-    awx_create_inventory(inventoryname, inventorydesc, orgname, inventorytype, inventoryvariables)
+    awx_create_inventory(inventoryname, inventorydesc, orgname, inventorytype, inventoryvariables, orgname)
 
   for host in hosts:
     hostname = host['name']
@@ -613,4 +618,4 @@ for org in (config['organization']):
       run_every = "MINUTELY"
     if ( schedule ['end'] == "never" ):
       dtend = "null"
-    awx_create_schedule(schedulename, unified_job_template_id, description,tz, dtstart, run_frequency, run_every, dtend, scheduletype)
+    awx_create_schedule(schedulename, unified_job_template_id, description,tz, dtstart, run_frequency, run_every, dtend, scheduletype, orgname)
