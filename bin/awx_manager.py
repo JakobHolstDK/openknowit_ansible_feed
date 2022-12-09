@@ -330,6 +330,7 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   try:
     tmplid=response['id']
     prettyllog("manage", "template", name, organization, resp.status_code, tmplid)
+    prettyllog("manage", "template", name, organization, resp.status_code, response)
   except:
     prettyllog("manage", "template", name, organization, resp.status_code, response)
   getawxdata("job_templates")
