@@ -440,7 +440,7 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
 def prettyllog(function, action, item, organization, text):
   d_date = datetime.datetime.now()
   reg_format_date = d_date.strftime("%Y-%m-%d %I:%M:%S %p")
-  print("%-20s" %( reg_format_date))
+  print("%-20s: %-20s %-20s %-20s %-20s %-20s " %( reg_format_date, function,action,item,organization,text))
 
 def refresh_awx_data():
   print("refresh data from awx")
