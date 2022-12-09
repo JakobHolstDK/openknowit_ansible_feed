@@ -320,6 +320,7 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
 }
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
+  print(tmplid)
   if (tmplid == ""):
     url = "https://ansible.openknowit.com/api/v2/job_templates/"
     resp = requests.post(url,headers=headers, json=data)
@@ -328,9 +329,8 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
     resp = requests.put(url,headers=headers, json=data)
   response = json.loads(resp.content)
   try:
-    newcredid=response['credential']
-    prettyllog("manage", "template", name, organization, resp.status_code, credid)
-    prettyllog("manage", "template", name, organization, resp.status_code, newcredid)
+    tmplid=response['id']
+    prettyllog("manage", "template", name, organization, resp.status_code, tmplid)
   except:
     prettyllog("manage", "template", name, organization, resp.status_code, response)
   getawxdata("job_templates")
