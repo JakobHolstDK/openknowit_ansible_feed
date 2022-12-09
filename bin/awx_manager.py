@@ -492,6 +492,7 @@ cfgfile = "etc/master.json"
 
 if (len(sys.argv) == 1):
   prettyllog("main", "start", "main", "master", "Running standalone : using local master config")
+  realm = "standalone"
 else:
     if (sys.argv[1] == "master" ):
         cfgfile = "/opt/openknowit_ansibleautomation_feed/etc/master.json"
