@@ -197,6 +197,7 @@ def awx_create_host(name, description, inventory, organization):
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
   url ="https://ansible.openknowit.com/api/v2/hosts/"
   resp = requests.post(url,headers=headers, json=data)
+  print(resp.status_code)
 
 
 
