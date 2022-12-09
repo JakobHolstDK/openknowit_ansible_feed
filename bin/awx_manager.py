@@ -201,7 +201,11 @@ def awx_create_host(name, description, inventory, organization):
   url ="https://ansible.openknowit.com/api/v2/hosts/"
   resp = requests.post(url,headers=headers, json=data)
   response = json.loads(resp.content)
-  prettyllog("manage", "host", name, organization, response['id'])
+  try:
+    hostid=response['id']
+    prettyllog("manage", "host", name, organization, "Host %s created with id: %s" % (name, hostid ))
+  except:
+    prettyllog("manage", "host", name, organization, response)
 
 
 
