@@ -241,9 +241,9 @@ def awx_create_organization(name, description, max_hosts, DEE, realm):
     url ="https://ansible.openknowit.com/api/v2/organizations/%s" % orgid
     resp = requests.put(url,headers=headers, json=data)
     if( resp.status_code == 200):
-      prettyllog("manage", "organization", name, "-", "updated")
+      prettyllog("manage", "organization", name, realm, "updated")
     if( resp.status_code == 400):
-      prettyllog("manage", "organization", name, "-", "up to date")
+      prettyllog("manage", "organization", name, realm, "up to date")
 
   getawxdata("organizations")
 
