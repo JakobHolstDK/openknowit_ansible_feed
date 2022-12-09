@@ -550,7 +550,11 @@ for org in (config['organization']):
   for host in hosts:
     hostname = host['name']
     hostdesc = host['description']
-    hostinventories = host['inventory']
+    hostinventories = host['inventories']
+    print("---------------------------")
+    print(hostinventories)
+    print("---------------------------")
+
     for hostinventory in hostinventories: 
       awx_create_host(hostname, hostdesc, hostinventory, orgname)
 

@@ -47,9 +47,7 @@
       ],
       "hosts": [
         {
-          "name": "ansible.openknowit.com",
-          "description": "Server cabable for running selfmaintainance",
-          "inventory": "000_masterinventory"
+          "name": "ansible.openknowit.com", "description": "Server cabable for running selfmaintainance", "inventores": ["000_masterinventory"]
         }
       ],
       "templates": [
