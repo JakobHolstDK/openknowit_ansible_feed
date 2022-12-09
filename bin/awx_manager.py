@@ -12,7 +12,7 @@ import datetime
 def prettyllog(function, action, item, organization, text):
   d_date = datetime.datetime.now()
   reg_format_date = d_date.strftime("%Y-%m-%d %I:%M:%S %p")
-  print("%-20s: %-20s %-20s %-20s %-20s %-20s " %( reg_format_date, function,action,item,organization,text))
+  print("%-20s: %-20s %-40s %-20s %-20s %-20s " %( reg_format_date, function,action,item,organization,text))
 
 class Hvac:
   def __init__(self):
