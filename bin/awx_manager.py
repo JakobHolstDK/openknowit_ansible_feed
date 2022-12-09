@@ -514,7 +514,7 @@ for org in (config['organization']):
   max_hosts = org['max_hosts']
   default_environment = org['default_environment']
   description = org['description']
-  awx_create_organizatioawx_create_organizationn(orgname, description, max_hosts, default_environment, realm)
+  awx_create_organization(orgname, description, max_hosts, default_environment, realm)
   getawxdata("organizations")
   orgid = awx_get_id("organizations", orgname)
   loop = True
