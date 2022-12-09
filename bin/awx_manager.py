@@ -12,7 +12,7 @@ import datetime
 def prettyllog(function, action, item, organization, text):
   d_date = datetime.datetime.now()
   reg_format_date = d_date.strftime("%Y-%m-%d %I:%M:%S %p")
-  print("%-20s: %-20s %-20s %-50s %-20s %-50s " %( reg_format_date, function,action,item,organization,text))
+  print("%-20s: %-12s %-20s %-50s %-20s %-50s " %( reg_format_date, function,action,item,organization,text))
 
 class Hvac:
   def __init__(self):
@@ -60,9 +60,11 @@ class Hvac:
     )
 
 
+prettyllog("------------", "----------", "----------", "----------", "--------------------------------------------------------------------------------------")
+
 vault = Hvac()
 if (vault.client.is_authenticated()):
-    prettyllog("main", "start", "main", "vault", "We are in the vault")
+    prettyllog("init", "authenticate", "vault", "main", "OK")
 else:
     exit
 
