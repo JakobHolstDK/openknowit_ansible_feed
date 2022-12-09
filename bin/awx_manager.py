@@ -229,7 +229,11 @@ def awx_create_organization(name, description, max_hosts, DEE, realm):
     url ="https://ansible.openknowit.com/api/v2/organizations/"
     resp = requests.post(url,headers=headers, json=data)
     response = json.loads(resp.content)
-    prettyllog("manage", "organization", name, realm, response)
+    try:
+      orgid=response['id']
+      prettyllog("manage", "organization", name, realm, "organization %s created with id %s" % (orgid))
+    except:
+      prettyllog("manage", "organization", name, realm, response)
   else:    
     mytoken = ansibletoken['token']
     headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
