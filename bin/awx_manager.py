@@ -323,8 +323,12 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
 }
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
-  url = "https://ansible.openknowit.com/api/v2/job_templates/"
-  resp = requests.post(url,headers=headers, json=data)
+  if (tmplid == ""):
+    url = "https://ansible.openknowit.com/api/v2/job_templates/"
+    resp = requests.post(url,headers=headers, json=data)
+  else:
+    url = "https://ansible.openknowit.com/api/v2/job_templates/%s/" % tmplid
+    resp = requests.put(url,headers=headers, json=data)
   response = json.loads(resp.content)
   try:
     tmplid=response['id']
