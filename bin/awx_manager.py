@@ -339,17 +339,20 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   tmplid = awx_get_id("job_templates", name )
   getawxdata("credentials")
   credid = (awx_get_id("credentials", credential))
-  associatecommand = "awx job_template associate %s --credential %s" % ( tmplid, credid)
-  print("----------------------------------")
-  print(associatecommand)
+  associatecommand = "awx job_template associate %s --credential %s >/dev/null 2>/dev/null " % ( tmplid, credid)
   os.system(associatecommand)
-  print("----------------------------------")
   ############################################################################### end of create job template ##########################################
 
 
+######################################
+# function:  Create Team
+######################################
 def awx_create_team(name, description, organization):
   prettyllog("manage", "team", name, organization, "000", "-")
 
+######################################
+# function: create user
+######################################
 def awx_create_user(name, description, organization):
   prettyllog("manage", "user", name, organization, "000", "-")
 
