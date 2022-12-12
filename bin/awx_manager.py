@@ -272,7 +272,9 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
   except:
     prettyllog("manage", "schedule", name, organization, resp.status_code, response)
 
-
+#
+# Create job template
+#
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
   orgid = (awx_get_id("organizations", organization))
   invid = (awx_get_id("inventories", inventory))
@@ -342,7 +344,7 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
   print(associatecommand)
   os.system(associatecommand)
   print("----------------------------------")
-  #
+  ############################################################################### end of create job template ##########################################
 
 
 def awx_create_team(name, description, organization):
@@ -520,8 +522,7 @@ else:
         prettyllog("init", "runtime", "config", "master", "002",  "Running Running as daemon")
     if (sys.argv[1] == "custom" ):
         prettyllog("init", "runtime", "config", "custom", "003" , "Running Running as daemon")
-        cfgfile = "/opt/openknowit_ansibleautomation_main/etc/custom.json"
-        realm="custom"
+        cfgfile = "/opt/openknowit_ansibleautomation_main/etc/aaoaa.d/%s" % sys.argv[2]
 
 f = open(cfgfile)
 config = json.loads(f.read())

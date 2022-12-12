@@ -1,20 +1,33 @@
 #!/usr/bin/env bash
 source ~/venv/bin/activate
 source /etc/vaultenvironment
-
 STATUS="RUNNING"
 
 while [[ ${STATUS} != "TERMINATE" ]];
 do
-	if [[ -f /opt/openknowit_ansibleautomation_feed/etc/master.json ]];
+	if [[ -f /opt/openknowit_ansibleautomation_feed/etc/aaoaa.json ]];
 	then
 		/opt/openknowit_ansibleautomation_feed/bin/awx_manager.py master
 	fi
-	if [[ -f /opt/openknowit_ansibleautomation_main/etc/custom.json ]];
+	if [[ -f /opt/openknowit_ansibleautomation_main/etc/aaoaa.json ]];
 	then
-		/opt/openknowit_ansibleautomation_feed/bin/awx_manager.py custom
+		/opt/openknowit_ansibleautomation_feed/bin/awx_manager.py custom ../aaoaa.json
 	fi
-	sleep 60
+
+	for CFGFILE in $(ls -1 /opt/openknowit_ansibleautomation_main/etc/aaoaa.d)
+	do	
+		cat $CFGFILE |jq . >/dev/null 2>&1
+		if [[ $? == 0 ]];
+		then
+			if [[ -f /opt/openknowit_ansibleautomation_main/etc/custom.json ]];
+			then
+				/opt/openknowit_ansibleautomation_feed/bin/awx_manager.py custom ${CFGFILE}
+			fi
+		else
+			echo "error in json file $cfgfile"
+		fi
+	done
+    sleep 60
 done
 	
 
