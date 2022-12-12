@@ -1,0 +1,126 @@
+{
+  "organization": [
+    {
+      "name": "000_main",
+      "description": "Demo of ansible automation",
+      "max_hosts": 100,
+      "default_environment": "Ansible Engine 2.9 execution environment",
+      "projects": [
+        {
+          "name": "000_main",
+          "description": "Main project ensure automation engine consistent",
+          "scm_type": "git",
+          "scm_url": "git@github.com:JakobHolstDK/openknowit_ansibleautomation_main.git",
+          "scm_branch": "main",
+          "credential": "000_github",
+          "master": "True"
+        }
+      ],
+      "credentials": [
+        {
+          "name": "000_github",
+          "description": "Github service account for testing",
+          "credential_type": "Source Control",
+          "user_vault_path": "project/openknowit/demogituser",
+          "kind": "scm"
+        },
+        { 
+          "name": "000_main",
+          "description": "main service account for testing",
+          "credential_type": "Machine",
+          "user_vault_path": "project/openknowit/remotesshuser",
+          "kind": "ssh"
+        }
+      ],
+      "inventories": [
+        {
+          "name": "000_masterinventory",
+          "description": "Inventorycontaining all servers under automation control",
+	        "variables": {
+	          "aaoaa_serviceaccount": {
+	          "name": "knowit",
+	          "gecos": "Anible on ansible automatiob"
+	           }
+	        },
+          "type": "static"
+        }
+      ],
+      "hosts": [
+        {
+          "name": "ansible.openknowit.com", "description": "Server cabable for running selfmaintainance", "inventories": ["000_masterinventory"]
+        }
+      ],
+      "templates": [
+        {
+          "name": "000_ansibleautomationmanager_checkup",
+          "description": "Master job for self healing ansible automation as code",
+          "job_type": "run",
+          "inventory": "000_masterinventory",
+          "project": "000_main",
+          "EE": "Automation Hub Default execution environment",
+          "credentials": "000_main",
+          "playbook": "checkup.yml"
+        },
+        {
+          "name": "000_ansibleautomationmanager_update",
+          "description": "Maintain ansible manager and prereqs",
+          "job_type": "run",
+          "inventory": "000_masterinventory",
+          "project": "000_main",
+          "EE": "Automation Hub Default execution environment",
+          "credentials": "000_main",
+          "playbook": "ansiblemanager.yml"
+        }
+      ],
+      "schedules": [
+        {
+          "name": "000_jobschedule_ansibleautomationmanager_checkup",
+          "type": "job",
+          "template": "000_ansibleautomationmanager_checkup",
+          "description": "Master job for ensuring connectivity",
+          "local_time_zone": "CET",
+          "run_every_minute": "5",
+          "start": "now",
+          "end": "never"
+        },
+        {
+          "name": "000_jobschedule_ansibleautomationmanager_update",
+          "type": "job",
+          "template": "000_ansibleautomationmanager_update",
+          "description": "Master job updating automation manager",
+          "local_time_zone": "CET",
+          "run_every_minute": "5",
+          "start": "now",
+          "end": "never"
+        },
+        {
+          "name": "000_projectschedule_ansibleautomationmanager",
+          "type": "project",
+          "project": "000_ansibleautomationmanager",
+          "description": "Master job for syncing project main",
+          "local_time_zone": "CET",
+          "run_every_minute": "10",
+          "start": "now",
+          "end": "never"
+        }
+      ],
+      "users": 
+        {
+          "user_vault_path": "project/openknowit/users",
+          "description": "AD integration is mandatory"
+        },
+      "labels":
+      [
+        { 
+          "name": "static"
+        },
+        {
+          "name": "production"
+        },
+        {
+           "name": "test"
+        }
+      ]
+    }
+  ]
+}
