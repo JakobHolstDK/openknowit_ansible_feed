@@ -511,7 +511,7 @@ def refresh_awx_data():
 ########################################################################################################################
 # Main:  start
 ########################################################################################################################
-cfgfile = "etc/master.json"
+cfgfile = "etc/aaoaa.json"
 realm = "standalone"
 if (len(sys.argv) == 1):
   prettyllog("init", "runtime", "config", "master", "001", "Running standalone : using local master config")
