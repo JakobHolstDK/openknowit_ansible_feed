@@ -334,9 +334,14 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
     except:
       prettyllog("update", "template", name, organization, resp.status_code, response)
   getawxdata("job_templates")
-
+  tmplid = awx_get_id("job_templates", name )
+  getawxdata("credentials")
+  credid = (awx_get_id("credentials", credential))
   associatecommand = "awx job_template associate %s --credential %s" % ( tmplid, credid)
+  print("----------------------------------")
+  print(associatecommand)
   os.system(associatecommand)
+  print("----------------------------------")
   #
 
 
@@ -631,3 +636,6 @@ for org in (config['organization']):
     if ( schedule ['end'] == "never" ):
       dtend = "null"
     awx_create_schedule(schedulename, unified_job_template_id, description,tz, dtstart, run_frequency, run_every, dtend, scheduletype, orgname)
+
+
+### The end
