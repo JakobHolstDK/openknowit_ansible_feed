@@ -508,6 +508,7 @@ def refresh_awx_data():
     getawxdata(item)
 
 
+########################################################################################################################
 # Main:  start
 ########################################################################################################################
 cfgfile = "etc/master.json"
@@ -517,7 +518,7 @@ if (len(sys.argv) == 1):
   realm = "standalone"
 else:
     if (sys.argv[1] == "master" ):
-        cfgfile = "/opt/openknowit_ansibleautomation_feed/etc/master.json"
+        cfgfile = "/opt/openknowit_ansibleautomation_feed/etc/aaoaa.json"
         realm="master"
         prettyllog("init", "runtime", "config", "master", "002",  "Running Running as daemon")
     if (sys.argv[1] == "custom" ):
