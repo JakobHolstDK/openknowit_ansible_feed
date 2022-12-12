@@ -522,7 +522,8 @@ else:
         realm="master"
         prettyllog("init", "runtime", "config", "master", "002",  "Running Running as daemon")
     if (sys.argv[1] == "custom" ):
-        prettyllog("init", "runtime", "config", "custom", "003" , "Running Running as daemon")
+        myinfo = "Running Running as daemon %s" % sys.argv[2]
+        prettyllog("init", "runtime", "config", "custom", "003" , myinfo)
         cfgfile = "/opt/openknowit_ansibleautomation_main/etc/aaoaa.d/%s" % sys.argv[2]
 
 f = open(cfgfile)
