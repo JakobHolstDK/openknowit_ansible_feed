@@ -2,13 +2,12 @@
   "organization": [
     {
       "name": "000_main",
-      "meta": [
+      "meta": 
         {
           "description": "Demo of ansible automation",
           "max_hosts": 100,
           "default_environment": "Ansible Engine 2.9 execution environment"
-        }
-      ],
+        },
       "projects": [
         {
           "name": "000_main",

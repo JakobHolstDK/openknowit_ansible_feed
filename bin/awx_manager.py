@@ -551,9 +551,9 @@ for org in (config['organization']):
   orgname = org['name']
   key = "ansible.openknowit.com:organizations:orphan:" + orgname
   r.delete(key)
-  max_hosts = org['meta'][1]['max_hosts']
-  default_environment = org['meta'][1]['default_environment']
-  description = org['meta'][1]['description']
+  max_hosts = org['meta']['max_hosts']
+  default_environment = org['meta']['default_environment']
+  description = org['meta']['description']
   awx_create_organization(orgname, description, max_hosts, default_environment, realm)
   getawxdata("organizations")
   orgid = awx_get_id("organizations", orgname)
