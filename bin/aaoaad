@@ -16,7 +16,7 @@ do
 
 	for CFGFILE in $(ls -1 /opt/openknowit_ansibleautomation_main/etc/aaoaa.d)
 	do	
-		cat $CFGFILE |jq . >/dev/null 2>&1
+		cat /opt/openknowit_ansibleautomation_main/etc/aaoaa.d/$CFGFILE |jq . >/dev/null 2>&1
 		if [[ $? == 0 ]];
 		then
 			if [[ -f /opt/openknowit_ansibleautomation_main/etc/custom.json ]];
