@@ -530,6 +530,9 @@ config = json.loads(f.read())
 f.close
 refresh_awx_data()
 
+########################################################################################################################
+# organizations
+########################################################################################################################
 for org in (config['organization']):
   orgname = org['name']
   key = "ansible.openknowit.com:organizations:orphan:" + orgname
@@ -547,97 +550,143 @@ for org in (config['organization']):
       loop = False
   refresh_awx_data()
 
-  projects = org['projects']
-  credentials = org['credentials']
-  inventories = org['inventories']
-  hosts = org['hosts']
-  users = org['users']
-  labels = org['labels']
-  templates = org['templates']
-  schedules = org['schedules']
+  ######################################
+  # Projects
+  ######################################
+  try:
+    projects = org['projects']
+    for project in projects:
+      projectname = project['name']
+      projectdesc = project['description']
+      projecttype = project['scm_type']
+      projecturl  = project['scm_url']
+      projectbrnc = project['scm_branch']
+      projectcred = project['credential']
+      key = "ansible.openknowit.com:projects:orphan:" + projectname
+      r.delete(key)
+      awx_create_project(projectname, projectdesc, projecttype, projecturl, projectbrnc, projectcred, orgname)
+      awx_get_id("projects", projectname)
+      projid = (awx_get_id("projects", projectname))
+  except:
+    prettyllog("config", "initialize", "projects", orgname, "000",  "No projects found")
 
-  for credential in credentials:
-    credentialname = credential['name']
-    credentialdesc = credential['description']
-    credentialtype = credential['credential_type']
-    credentialuser = credential['user_vault_path']
-    credentialkind = credential['kind']
-    key = "ansible.openknowit.com:credentials:orphan:" + credentialname
-    r.delete(key)
-    awx_create_credential( credentialname, credentialdesc, credentialtype, credentialuser, credentialkind, orgname)
-    loop = True
-    while (loop):
+  ######################################
+  # Credentials
+  ######################################
+  try:
+    credentials = org['credentials']
+    for credential in credentials:
+      credentialname = credential['name']
+      credentialdesc = credential['description']
+      credentialtype = credential['credential_type']
+      credentialuser = credential['user_vault_path']
+      credentialkind = credential['kind']
+      key = "ansible.openknowit.com:credentials:orphan:" + credentialname
+      r.delete(key)
+      awx_create_credential( credentialname, credentialdesc, credentialtype, credentialuser, credentialkind, orgname)
+      loop = True
+      while (loop):
         credid = awx_get_id("credentials", credentialname)
         if ( credid != "" ):
           loop = False
+  except:
+    prettyllog("config", "initialize", "credentials", orgname, "000",  "No credentioals found")
 
-  for project in projects:
-    projectname = project['name']
-    projectdesc = project['description']
-    projecttype = project['scm_type']
-    projecturl  = project['scm_url']
-    projectbrnc = project['scm_branch']
-    projectcred = project['credential']
-    key = "ansible.openknowit.com:projects:orphan:" + projectname
-    r.delete(key)
-    awx_create_project(projectname, projectdesc, projecttype, projecturl, projectbrnc, projectcred, orgname)
-    awx_get_id("projects", projectname)
-    projid = (awx_get_id("projects", projectname))
+  ######################################
+  # inventories
+  ######################################
+  try:
+    inventories = org['inventories']
+    for inventory in inventories:
+      inventoryname = inventory['name']
+      inventorydesc = inventory['description']
+      inventorytype = inventory['type']
+      inventoryvariables = inventory['variables']
+      awx_create_inventory(inventoryname, inventorydesc, orgname, inventorytype, inventoryvariables)
+  except:
+    prettyllog("config", "initialize", "inventories", orgname, "000",  "No inventories found")
 
-  for label in labels:
-    labelname = label['name']
-    awx_create_label(labelname, orgname)
+  ######################################
+  # hosts
+  ######################################
+  try:
+    hosts = org['hosts']
+    for host in hosts:
+      hostname = host['name']
+      hostdesc = host['description']
+      hostinventories = host['inventories']
+      for hostinventory in hostinventories: 
+        awx_create_host(hostname, hostdesc, hostinventory, orgname)
+  except:
+    prettyllog("config", "initialize", "hosts", orgname, "000",  "No hosts found")
 
-  for inventory in inventories:
-    inventoryname = inventory['name']
-    inventorydesc = inventory['description']
-    inventorytype = inventory['type']
-    inventoryvariables = inventory['variables']
-    awx_create_inventory(inventoryname, inventorydesc, orgname, inventorytype, inventoryvariables)
+  ######################################
+  # users
+  ######################################
+  try:
+    users = org['users']
+  except:
+    prettyllog("config", "initialize", "users", orgname, "000",  "No users found")
 
-  for host in hosts:
-    hostname = host['name']
-    hostdesc = host['description']
-    hostinventories = host['inventories']
-    for hostinventory in hostinventories: 
-      awx_create_host(hostname, hostdesc, hostinventory, orgname)
+  ######################################
+  # label
+  ######################################
+  try:
+    labels = org['labels']
+    for label in labels:
+      labelname = label['name']
+      awx_create_label(labelname, orgname)
+  except:
+    prettyllog("config", "initialize", "labels", orgname, "000",  "No labels found")
 
-  for template in templates:
-    templatename = template['name']
-    templatedescription = template['description']
-    templatejob_type = template['job_type']
-    templateinventory =  template['inventory']
-    templateproject = template['project']
-    templateEE = template['EE']
-    templatecredential = template['credentials']  
-    templateplaybook = template['playbook']
-    awx_create_template(templatename, templatedescription, templatejob_type, templateinventory, templateproject, templateEE, templatecredential, templateplaybook, orgname)
+  ######################################
+  # Templates
+  ######################################
+  try:
+    templates = org['templates']
+    for template in templates:
+      templatename = template['name']
+      templatedescription = template['description']
+      templatejob_type = template['job_type']
+      templateinventory =  template['inventory']
+      templateproject = template['project']
+      templateEE = template['EE']
+      templatecredential = template['credentials']  
+      templateplaybook = template['playbook']
+      awx_create_template(templatename, templatedescription, templatejob_type, templateinventory, templateproject, templateEE, templatecredential, templateplaybook, orgname)
+  except:
+    prettyllog("config", "initialize", "templates", orgname, "000",  "No templates found")
 
-  for schedule in schedules:
-    schedulename = schedule['name']
-    if ( schedule['type'] == "job"):
-      templatename = schedule['template']
-      unified_job_template_id = awx_get_id("job_templates", templatename)
-    if ( schedule['type'] == "project"):
-      projectname = schedule['project']
-      unified_job_template_id = awx_get_id("projects", projectname)
-    tz = schedule['local_time_zone']
-    if ( schedule ['start'] == "now" ):
-      dtstart = { 
-        "year": "2012",
-        "month": "12",
-        "day": "01",
-        "hour": "12",
-        "minute": "00",
-        "second": "00"
-        }
-    if ( int(schedule['run_every_minute']) ):
-      scheduletype="Normal"
-      run_frequency =  schedule['run_every_minute']
-      run_every = "MINUTELY"
-    if ( schedule ['end'] == "never" ):
-      dtend = "null"
-    awx_create_schedule(schedulename, unified_job_template_id, description,tz, dtstart, run_frequency, run_every, dtend, scheduletype, orgname)
-
-
+  ######################################
+  # Schedules
+  ######################################
+  try:
+    schedules = org['schedules']
+    for schedule in schedules:
+      schedulename = schedule['name']
+      if ( schedule['type'] == "job"):
+        templatename = schedule['template']
+        unified_job_template_id = awx_get_id("job_templates", templatename)
+      if ( schedule['type'] == "project"):
+        projectname = schedule['project']
+        unified_job_template_id = awx_get_id("projects", projectname)
+      tz = schedule['local_time_zone']
+      if ( schedule ['start'] == "now" ):
+        dtstart = { 
+          "year": "2012",
+          "month": "12",
+          "day": "01",
+          "hour": "12",
+          "minute": "00",
+          "second": "00"
+          }
+      if ( int(schedule['run_every_minute']) ):
+        scheduletype="Normal"
+        run_frequency =  schedule['run_every_minute']
+        run_every = "MINUTELY"
+      if ( schedule ['end'] == "never" ):
+        dtend = "null"
+      awx_create_schedule(schedulename, unified_job_template_id, description,tz, dtstart, run_frequency, run_every, dtend, scheduletype, orgname)
+  except:
+    prettyllog("config", "initialize", "schedules", orgname, "000",  "No schedules found")
 ### The end
