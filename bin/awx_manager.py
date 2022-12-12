@@ -353,6 +353,9 @@ def awx_create_team(name, description, organization):
 def awx_create_user(name, description, organization):
   prettyllog("manage", "user", name, organization, "000", "-")
 
+######################################
+# function: get  organization
+######################################
 def awx_create_credential( name, description, credential_type, credentialuser, kind, organization ):
   try:
     credid = (awx_get_id("credentials", name))
@@ -421,6 +424,9 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
   getawxdata("credentials")
 
 
+######################################
+# function: get  organization
+######################################
 def awx_get_organization(orgid):
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -428,6 +434,9 @@ def awx_get_organization(orgid):
   resp = requests.get(url,headers=headers)
   return   json.loads(resp.content)
 
+######################################
+# function: get Project 
+######################################
 def awx_get_project(projid, organization):
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -542,9 +551,9 @@ for org in (config['organization']):
   orgname = org['name']
   key = "ansible.openknowit.com:organizations:orphan:" + orgname
   r.delete(key)
-  max_hosts = org['meta']['max_hosts']
-  default_environment = org['meta']['default_environment']
-  description = org['meta']['description']
+  max_hosts = org['meta'][1]['max_hosts']
+  default_environment = org['meta'][1]['default_environment']
+  description = org['meta'][1]['description']
   awx_create_organization(orgname, description, max_hosts, default_environment, realm)
   getawxdata("organizations")
   orgid = awx_get_id("organizations", orgname)
