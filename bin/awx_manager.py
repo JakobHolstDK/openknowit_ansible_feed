@@ -436,6 +436,9 @@ def awx_get_project(projid, organization):
   resp = requests.get(url,headers=headers)
   return   json.loads(resp.content)
   
+######################################
+# function: Create Project 
+######################################
 def awx_create_project(name, description, scm_type, scm_url, scm_branch, credential, organization):
   getawxdata("projects")
   try:  
@@ -501,7 +504,9 @@ def awx_create_project(name, description, scm_type, scm_url, scm_branch, credent
       prettyllog("manage", "project", name, organization, "666", "Project is not ready")
   refresh_awx_data()
 
-
+######################################
+# function: Refresh AWX data
+######################################
 def refresh_awx_data():
   items = {"organizations", "projects", "credentials", "hosts", "inventories", "credential_types", "labels" , "instance_groups", "job_templates"}    
   for item in items:
@@ -537,7 +542,8 @@ for org in (config['organization']):
   orgname = org['name']
   key = "ansible.openknowit.com:organizations:orphan:" + orgname
   r.delete(key)
-  max_hosts = org['max_hosts']
+
+  max_hosts = org['meta']['max_hosts']
   default_environment = org['default_environment']
   description = org['description']
   awx_create_organization(orgname, description, max_hosts, default_environment, realm)
