@@ -381,17 +381,11 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
 
   if ( secrets == "environment") and ( kind == "ssh"):
     sshkey = os.getenv("SSHKEY").strip('"') 
-    print("-----------------------------")
-    print(sshkey)
-    print("-----------------------------")
     myuser = os.getenv("SSHUSER")
     mypass = os.getenv("SSHPASS")
 
   if ( secrets == "vault" ):
     sshkey = vault_get_secret(credentialuser)['key']
-    print("-----------------------------")
-    print(sshkey)
-    print("-----------------------------")
     myuser = vault_get_secret(credentialuser)['username']
     mypass = vault_get_secret(credentialuser)['password']
 
@@ -409,9 +403,6 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
           },
         "kind": kind
         }
-    print("-----------------------------")
-    print(data['inputs']['ssh_key_data'])
-    print("-----------------------------")
 
   if( kind == "ssh" ):
     becomemethod = vault_get_secret(credentialuser)['becomemethod']
@@ -434,9 +425,6 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
         "kind": kind
         }
 
-    print("-----------------------------")
-    print(data['inputs']['ssh_key_data'])
-    print("-----------------------------")
   if ( credid == ""):
     url = "https://ansible.openknowit.com/api/v2/credentials/"
     resp = requests.post(url,headers=headers, json=data)
@@ -601,25 +589,6 @@ for org in (config['organization']):
       loop = False
   refresh_awx_data()
 
-  ######################################
-  # Projects
-  ######################################
-  try:
-    projects = org['projects']
-    for project in projects:
-      projectname = project['name']
-      projectdesc = project['description']
-      projecttype = project['scm_type']
-      projecturl  = project['scm_url']
-      projectbrnc = project['scm_branch']
-      projectcred = project['credential']
-      key = "ansible.openknowit.com:projects:orphan:" + projectname
-      r.delete(key)
-      awx_create_project(projectname, projectdesc, projecttype, projecturl, projectbrnc, projectcred, orgname)
-      awx_get_id("projects", projectname)
-      projid = (awx_get_id("projects", projectname))
-  except:
-    prettyllog("config", "initialize", "projects", orgname, "000",  "No projects found")
 
   ######################################
   # Credentials
@@ -642,6 +611,26 @@ for org in (config['organization']):
           loop = False
   except:
     prettyllog("config", "initialize", "credentials", orgname, "000",  "No credentioals found")
+
+  ######################################
+  # Projects
+  ######################################
+  try:
+    projects = org['projects']
+    for project in projects:
+      projectname = project['name']
+      projectdesc = project['description']
+      projecttype = project['scm_type']
+      projecturl  = project['scm_url']
+      projectbrnc = project['scm_branch']
+      projectcred = project['credential']
+      key = "ansible.openknowit.com:projects:orphan:" + projectname
+      r.delete(key)
+      awx_create_project(projectname, projectdesc, projecttype, projecturl, projectbrnc, projectcred, orgname)
+      awx_get_id("projects", projectname)
+      projid = (awx_get_id("projects", projectname))
+  except:
+    prettyllog("config", "initialize", "projects", orgname, "000",  "No projects found")
 
   ######################################
   # inventories

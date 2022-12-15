@@ -16,9 +16,6 @@ do
 
 	for CFGFILE in $(ls -1 /opt/openknowit_ansibleautomation_main/etc/aaoaa.d)
 	do	
-		echo "===================================================="
-		echo $CFGFILE
-		echo "===================================================="
 		cat /opt/openknowit_ansibleautomation_main/etc/aaoaa.d/$CFGFILE |jq . >/dev/null 2>&1
 		if [[ $? == 0 ]];
 		then
