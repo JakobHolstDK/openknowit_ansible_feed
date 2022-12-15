@@ -16,13 +16,13 @@ do
 
 	for CFGFILE in $(ls -1 /opt/openknowit_ansibleautomation_main/etc/aaoaa.d)
 	do	
+		echo "===================================================="
+		echo $CFGFILE
+		echo "===================================================="
 		cat /opt/openknowit_ansibleautomation_main/etc/aaoaa.d/$CFGFILE |jq . >/dev/null 2>&1
 		if [[ $? == 0 ]];
 		then
-			if [[ -f /opt/openknowit_ansibleautomation_main/etc/custom.json ]];
-			then
-				/opt/openknowit_ansibleautomation_feed/bin/awx_manager.py custom ${CFGFILE}
-			fi
+		   /opt/openknowit_ansibleautomation_feed/bin/awx_manager.py custom ${CFGFILE}
 		else
 			echo "error in json file $cfgfile"
 		fi
