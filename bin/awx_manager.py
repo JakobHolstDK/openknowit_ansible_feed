@@ -9,8 +9,8 @@ import os
 import sys
 import datetime
 
-secrets = "environment"
-#secrets = "vault"
+#secrets = "environment"
+secrets = "vault"
 
 
 
@@ -573,9 +573,6 @@ for org in (config['organization']):
   orgname = org['name']
   key = "ansible.openknowit.com:organizations:orphan:" + orgname
   r.delete(key)
-  print("########################################################################################################################")
-  print(org['meta'])
-  print("########################################################################################################################")
   max_hosts = org['meta']['max_hosts']
   default_environment = org['meta']['default_environment']
   description = org['meta']['description']
