@@ -9,22 +9,11 @@ do
 	then
 		/opt/openknowit_ansibleautomation_feed/bin/awx_manager.py master
 	fi
-	if [[ -f /opt/openknowit_ansibleautomation_main/etc/aaoaa.json ]];
-	then
-		/opt/openknowit_ansibleautomation_feed/bin/awx_manager.py custom ../aaoaa.json
-	fi
+	COUNT=0
 
-	for CFGFILE in $(ls -1 /opt/openknowit_ansibleautomation_main/etc/aaoaa.d)
-	do	
-		cat /opt/openknowit_ansibleautomation_main/etc/aaoaa.d/$CFGFILE |jq . >/dev/null 2>&1
-		if [[ $? == 0 ]];
-		then
-		   /opt/openknowit_ansibleautomation_feed/bin/awx_manager.py custom ${CFGFILE}
-		else
-			echo "error in json file $cfgfile"
-		fi
-	done
-    sleep 60
+	
+
 done
 	
 
+ad
