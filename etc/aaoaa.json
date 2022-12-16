@@ -27,6 +27,14 @@
           "user_vault_path": "project/openknowit/demogituser",
           "kind": "scm"
         },
+        {
+          "name" : "mainvault",
+          "description": "main hashicorp vault",
+          "credential_type": "HashiCorp Vault Secret Lookup",
+          "source": "environment",
+          "remarks": "Will be using kickstartusers environment variables",
+          "kind": "hashivault_kv"
+        },
         { 
           "name": "000_main",
           "description": "main service account for testing",

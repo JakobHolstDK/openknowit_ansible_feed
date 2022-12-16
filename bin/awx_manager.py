@@ -360,7 +360,7 @@ def awx_create_user(name, description, organization):
   prettyllog("manage", "user", name, organization, "000", "-")
 
 ######################################
-# function: get  organization
+# function: create Credential
 ######################################
 def awx_create_credential( name, description, credential_type, credentialuser, kind, organization ):
   try:
@@ -386,6 +386,25 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
     sshkey = vault_get_secret(credentialuser)['key']
     myuser = vault_get_secret(credentialuser)['username']
     mypass = vault_get_secret(credentialuser)['password']
+
+  if( kind == "hashivault_kv"):
+    myurl = os.getenv(key="VAULT_URL")
+    mytoken = os.getenv(key="VAULT_TOKEN")
+    data = {
+      "name": name,
+      "description": description,
+      "credential_type": credentialtypeid,
+      "organization": orgid,
+      "inputs":
+        {
+           "url": myurl,
+           "token": mytoken
+        },
+      "kind": kind
+    }
+    
+
+
 
   if( kind == "scm"):
     data = {
