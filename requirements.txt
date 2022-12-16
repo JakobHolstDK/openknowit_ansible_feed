@@ -2,7 +2,7 @@ ansible==6.6.0
 ansible-core==2.13.6
 ansible-inventory==0.6.4
 async-timeout==4.0.2
-awxkit==3.8.6
+awxkit==21.10.1
 certifi==2022.9.24
 cffi==1.15.1
 charset-normalizer==2.1.1
