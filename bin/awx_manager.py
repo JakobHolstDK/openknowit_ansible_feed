@@ -308,7 +308,7 @@ def awx_create_template(name, description, job_type, inventory,project,ee, crede
     "host_config_key": "",
     "ask_scm_branch_on_launch": "false",
     "ask_diff_mode_on_launch": "false",
-    "ask_variables_on_launch": "true",
+    "ask_variables_on_launch": "false",
     "ask_limit_on_launch": "false",
     "ask_tags_on_launch": "false",
     "ask_skip_tags_on_launch": "false",

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+/opt/openknowit_ansibleautomation_feed/bin/initaaoaa
+source ~/aaooaavenv/bin/activat
+source /etc/vaultenvironment
+STATUS="RUNNING"
+
+ /opt/openknowit_ansibleautomation_feed/bin/awx_manager.py
+	
