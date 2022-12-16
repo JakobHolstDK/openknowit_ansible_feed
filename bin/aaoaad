@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-source ~/venv/bin/activate
+/opt/openknowit_ansibleautomation_feed/bin/initaaoaa
+source ~/aaooaavenv/bin/activat
 source /etc/vaultenvironment
 STATUS="RUNNING"
 
