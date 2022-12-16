@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import redis
 from pprint import pprint
 import json
