@@ -215,8 +215,10 @@ def awx_create_host(name, description, inventory, organization):
 ############################################################################################################################
 # update ansible vault
 ############################################################################################################################
-def awx_update_vault(ansiblevault):
+def awx_update_vault(ansiblevault, organization):
   print(ansiblevault)
+  print(organization)
+  
 
 
 
@@ -599,7 +601,6 @@ ansiblevaultfile = "etc/secret.json"
 f = open(ansiblevaultfile)
 ansiblevault = json.loads(f.read())
 f.close
-awx_update_vault(ansiblevault)
 
 
 ########################################################################################################################
@@ -629,6 +630,7 @@ refresh_awx_data()
 ########################################################################################################################
 for org in (config['organization']):
   orgname = org['name']
+  awx_update_vault(ansiblevault, orgname)
   key = "ansible.openknowit.com:organizations:orphan:" + orgname
   r.delete(key)
   max_hosts = org['meta']['max_hosts']
