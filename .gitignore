@@ -2,3 +2,4 @@ secrets/
 __pycache__/
 ansible.json
 env/
+etc/secrets.json

@@ -6,7 +6,8 @@
         {
           "description": "Demo of ansible automation",
           "max_hosts": 100,
-          "default_environment": "Ansible Engine 2.9 execution environment"
+          "default_environment": "Ansible Engine 2.9 execution environment",
+          "secrets": "files"
         },
       "projects": [
         {
@@ -19,29 +20,10 @@
           "master": "True"
         }
       ],
-      "credentials": [
-        {
-          "name": "000_github",
-          "description": "Github service account for testing",
-          "credential_type": "Source Control",
-          "user_vault_path": "project/openknowit/demogituser",
-          "kind": "scm"
-        },
-        {
-          "name" : "mainvault",
-          "description": "main hashicorp vault",
-          "credential_type": "HashiCorp Vault Secret Lookup",
-          "source": "environment",
-          "remarks": "Will be using kickstartusers environment variables",
-          "kind": "hashivault_kv"
-        },
-        { 
-          "name": "000_main",
-          "description": "main service account for testing",
-          "credential_type": "Machine",
-          "user_vault_path": "project/openknowit/remotesshuser",
-          "kind": "ssh"
-        }
+      "credentials": [ 
+        { "name": "000_github",         "description": "Github service account for testing",  "credential_type": "Source Control",                "user_vault_path": "project/openknowit/demogituser",    "remarks": "-", "kind": "scm" },
+        { "name": "000_vault_token",    "description": "Vault token",                         "credential_type": "Vault",                         "user_vault_path": "/etc/", "remarks": "-", "kind": "vault" },
+        { "name": "000_main",           "description": "main service account for testing",    "credential_type": "Machine",                       "user_vault_path": "project/openknowit/remotesshuser",  "remarks": "-", "kind": "ssh" }
       ],
       "inventories": [
         {

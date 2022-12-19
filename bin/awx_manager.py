@@ -212,9 +212,18 @@ def awx_create_host(name, description, inventory, organization):
 
 
 
+############################################################################################################################
+# update ansible vault
+############################################################################################################################
+def awx_update_vault(ansiblevault):
+  print(ansiblevault)
 
 
 
+
+############################################################################################################################
+# Create organization
+############################################################################################################################
 
 def awx_create_organization(name, description, max_hosts, DEE, realm):
   try:  
@@ -252,6 +261,9 @@ def awx_create_organization(name, description, max_hosts, DEE, realm):
   getawxdata("organizations")
 
 
+############################################################################################################################
+# Create job schedule
+############################################################################################################################
 def awx_create_schedule(name, unified_job_template,  description, tz, start, run_frequency, run_every, end, scheduletype, organization):
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
@@ -275,9 +287,9 @@ def awx_create_schedule(name, unified_job_template,  description, tz, start, run
   except:
     prettyllog("manage", "schedule", name, organization, resp.status_code, response)
 
-#
+############################################################################################################################
 # Create job template
-#
+############################################################################################################################
 def awx_create_template(name, description, job_type, inventory,project,ee, credential, playbook, organization):
   orgid = (awx_get_id("organizations", organization))
   invid = (awx_get_id("inventories", inventory))
@@ -386,6 +398,20 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
     sshkey = vault_get_secret(credentialuser)['key']
     myuser = vault_get_secret(credentialuser)['username']
     mypass = vault_get_secret(credentialuser)['password']
+  
+  if( kind == "vault"):
+    data = {
+      "name": myuser,
+      "description": description,
+      "credential_type": credentialtypeid,
+      "organization": orgid,
+      "inputs":
+        {
+           "vault_id": "",
+           "token": mypass
+        },
+      "kind": kind
+    }
 
   if( kind == "hashivault_kv"):
     myurl = os.getenv(key="VAULT_URL")
@@ -563,6 +589,21 @@ def refresh_awx_data():
 
 ########################################################################################################################
 # Main:  start
+########################################################################################################################
+
+
+########################################################################################################################
+# Load and set ansible secrets in ansible vault
+########################################################################################################################
+ansiblevaultfile = "etc/secret.json"
+f = open(ansiblevaultfile)
+ansiblevault = json.loads(f.read())
+f.close
+awx_update_vault(ansiblevault)
+
+
+########################################################################################################################
+# Load  and set ansible automation org
 ########################################################################################################################
 cfgfile = "etc/aaoaa.json"
 realm = "standalone"
