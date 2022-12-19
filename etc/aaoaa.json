@@ -46,7 +46,7 @@
           "inventory": "000_masterinventory",
           "project": "000_main",
           "EE": "Automation Hub Default execution environment",
-          "credentials": "serverkey",
+          "credentials": "masterkey",
           "playbook": "checkup.yml"
         },
         {
@@ -56,7 +56,7 @@
           "inventory": "000_masterinventory",
           "project": "000_main",
           "EE": "Automation Hub Default execution environment",
-          "credentials": "serverkey",
+          "credentials": "masterkey",
           "playbook": "ansiblemanager.yml"
         }
       ],

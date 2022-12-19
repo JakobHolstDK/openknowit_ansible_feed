@@ -210,6 +210,14 @@ def awx_create_host(name, description, inventory, organization):
   except:
     prettyllog("manage", "host", name, organization, resp.status_code, response)
 
+def readthefile(filename):
+  f = open(filename)
+  fileval = f.read()
+  f.close
+  print("############################################################################################################################")
+  print(fileval)
+  print("############################################################################################################################")
+  return fileval
 
 
 ############################################################################################################################
@@ -222,13 +230,11 @@ def awx_update_vault(ansiblevault, organization):
     awx_create_credential(credential, organization)
 
   for ssh in ansiblevault[organization]['ssh']:
-    f = open(ssh['ssh_private_key'])
-    sshkeyval = f.read()
-    f.close
+    sshkeyval = readthefile(ssh['ssh_private_key'])
     credential = { 
       "name": ssh['name'], 
       "username": ssh['username'], 
-      "password": ssh['password'], 
+      "password": ssh['password'],
       "description": ssh['description'], 
       "type": "Machine", 
       "ssh_key_data": sshkeyval,
@@ -500,11 +506,13 @@ def awx_create_credential( credential , organization):
           },
         "kind": credential['kind']
         }
+    print(data)
 
   if ( credid == ""):
     url = "https://ansible.openknowit.com/api/v2/credentials/"
     resp = requests.post(url,headers=headers, json=data)
     response = json.loads(resp.content)
+    print(response)
     try:
       credid=response['id']
       prettyllog("manage", "credential", credential['name'], organization, resp.status_code, credid)
@@ -661,7 +669,6 @@ refresh_awx_data()
 ########################################################################################################################
 for org in (config['organization']):
   orgname = org['name']
-  awx_update_vault(ansiblevault, orgname)
   key = "ansible.openknowit.com:organizations:orphan:" + orgname
   r.delete(key)
   max_hosts = org['meta']['max_hosts']
@@ -675,6 +682,7 @@ for org in (config['organization']):
     orgdata = awx_get_organization(orgid)
     if ( orgdata['name'] == orgname ):
       loop = False
+  awx_update_vault(ansiblevault, orgname)
   refresh_awx_data()
 
 
