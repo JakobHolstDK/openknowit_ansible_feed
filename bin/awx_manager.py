@@ -216,9 +216,48 @@ def awx_create_host(name, description, inventory, organization):
 # update ansible vault
 ############################################################################################################################
 def awx_update_vault(ansiblevault, organization):
-  print(ansiblevault)
-  print(organization)
-  
+  print("############################################################################################################################")
+  for password in ansiblevault[organization]['vault']:
+    credential = { "name": password['name'], "description": password['description'], "type": "Vault", "vault_id": "", "vault_password": password['value'], "kind": "vault" }
+    awx_create_credential(credential, organization)
+
+  for ssh in ansiblevault[organization]['ssh']:
+    f = open(ssh['ssh_private_key'])
+    sshkeyval = f.read()
+    f.close
+    credential = { 
+      "name": ssh['name'], 
+      "username": ssh['username'], 
+      "password": ssh['password'], 
+      "description": ssh['description'], 
+      "type": "Machine", 
+      "ssh_key_data": sshkeyval,
+      "privilege_escalation_method": ssh['privilege_escalation_method'],
+      "privilege_escalation_username": ssh['privilege_escalation_username'],
+      "privilege_escalation_password": ssh['privilege_escalation_password'],
+      "kind": "ssh" 
+      }
+    awx_create_credential(credential, organization)
+
+  for scm in ansiblevault[organization]['scm']:
+    f = open(ssh['ssh_private_key'])
+    sshkeyval = f.read()
+    f.close
+    credential = { 
+      "name": scm['name'], 
+      "username": scm['username'], 
+      "password": scm['password'], 
+      "description": scm['description'], 
+      "type": "Source Control", 
+      "ssh_key_data": sshkeyval,
+      "kind": "scm" 
+      }
+    awx_create_credential(credential, organization)
+
+
+  print("############################################################################################################################")
+
+
 
 
 
@@ -376,98 +415,90 @@ def awx_create_user(name, description, organization):
 ######################################
 # function: create Credential
 ######################################
-def awx_create_credential( name, description, credential_type, credentialuser, kind, organization ):
+def awx_create_credential( credential , organization):
   try:
-    credid = (awx_get_id("credentials", name))
+    credid = (awx_get_id("credentials", credential['name']))
   except:
     print("Unexcpetede error")
   orgid = (awx_get_id("organizations", organization))
   mytoken = ansibletoken['token']
   headers = {"User-agent": "python-awx-client", "Content-Type": "application/json","Authorization": "Bearer {}".format(mytoken)}
-  credentialtypeid = (awx_get_id("credential_types", credential_type))
+  credentialtypeid = (awx_get_id("credential_types", credential['type']))
 
-  if ( secrets == "environment") and ( kind == "scm"):
-    sshkey = os.getenv("GITKEY").strip('"') 
-    myuser = os.getenv("GITUSER")
-    mypass = os.getenv("GITPASS")
-
-  if ( secrets == "environment") and ( kind == "ssh"):
-    sshkey = os.getenv("SSHKEY").strip('"') 
-    myuser = os.getenv("SSHUSER")
-    mypass = os.getenv("SSHPASS")
-
-  if ( secrets == "vault" ):
-    sshkey = vault_get_secret(credentialuser)['key']
-    myuser = vault_get_secret(credentialuser)['username']
-    mypass = vault_get_secret(credentialuser)['password']
-  
-  if( kind == "vault"):
+######################################
+# type: vault
+######################################
+  if( credential['kind'] == "vault"):
     data = {
-      "name": myuser,
-      "description": description,
+      "name": credential['name'],
+      "description": credential['description'],
       "credential_type": credentialtypeid,
       "organization": orgid,
       "inputs":
         {
            "vault_id": "",
-           "token": mypass
+           "vault_password": credential['vault_password']
         },
-      "kind": kind
+      "kind": credential['kind']
     }
 
-  if( kind == "hashivault_kv"):
+######################################
+# type: hashicorp vault
+######################################
+  if( credential['kind'] == "hashivault_kv"):
     myurl = os.getenv(key="VAULT_URL")
     mytoken = os.getenv(key="VAULT_TOKEN")
     data = {
-      "name": name,
-      "description": description,
+      "name": credential['name'],
+      "description": credential['description'],
       "credential_type": credentialtypeid,
       "organization": orgid,
       "inputs":
         {
-           "url": myurl,
-           "token": mytoken
+           "url": credential['url'],
+           "token": credential['token']
         },
-      "kind": kind
+      "kind": credential['kind']
     }
-    
 
 
-
-  if( kind == "scm"):
+######################################
+# type: GIT source control
+######################################
+  if( credential['kind'] == "scm"):
     data = {
-        "name": name,
-        "description": description,
+        "name": credential['name'],
+        "description": credential['description'],
         "credential_type": credentialtypeid,
         "organization": orgid,
         "inputs":
           {
-            "ssh_key_data": sshkey,
-            "username": myuser,
-            "password": mypass
+            "ssh_key_data": credential['ssh_key_data'],
+            "username": credential['username'],
+            "password": credential['password']
           },
-        "kind": kind
+        "kind": credential['kind']
         }
 
-  if( kind == "ssh" ):
-    becomemethod = vault_get_secret(credentialuser)['becomemethod']
-    becomeuser = vault_get_secret(credentialuser)['becomeusername']
-    becomepass = vault_get_secret(credentialuser)['becomepassword']
+######################################
+# type: machine 
+######################################
+  if( credential['kind'] == "ssh" ):
     data = {
-        "name": name,
-        "description": description,
+        "name": credential['name'],
+        "description": credential['description'],
         "credential_type": credentialtypeid,
         "organization": orgid,
         "inputs":
           {
-            "ssh_key_data": sshkey, 
-            "username": myuser,
-            "password": mypass,
-            "become_method": becomemethod,
-            "become_username": becomeuser,
-            "become_password": becomepass
+            "ssh_key_data": credential['ssh_key_data'], 
+            "username": credential['username'],
+            "password": credential['password'],
+            "become_method": credential['privilege_escalation_method'],
+            "become_username": credential['privilege_escalation_username'],
+            "become_password": credential['privilege_escalation_password']
           },
-        "kind": kind
+        "kind": credential['kind']
         }
 
   if ( credid == ""):
@@ -476,18 +507,18 @@ def awx_create_credential( name, description, credential_type, credentialuser, k
     response = json.loads(resp.content)
     try:
       credid=response['id']
-      prettyllog("manage", "credential", name, organization, resp.status_code, credid)
+      prettyllog("manage", "credential", credential['name'], organization, resp.status_code, credid)
     except:
-      prettyllog("manage", "credential", name, organization, resp.status_code, response)
+      prettyllog("manage", "credential", credential['name'], organization, resp.status_code, response)
   else:
     url = "https://ansible.openknowit.com/api/v2/credentials/%s/" % credid
     resp = requests.put(url,headers=headers, json=data)
     response = json.loads(resp.content)
     try:
       credid=response['id']
-      prettyllog("manage", "credential", name, organization, resp.status_code, credid)
+      prettyllog("manage", "credential", credential['name'], organization, resp.status_code, credid)
     except:
-      prettyllog("manage", "credential", name, organization, resp.status_code, response)
+      prettyllog("manage", "credential", credential['name'], organization, resp.status_code, response)
   getawxdata("credentials")
 
 
@@ -648,26 +679,21 @@ for org in (config['organization']):
 
 
   ######################################
-  # Credentials
+  # Credentials   
   ######################################
-  try:
-    credentials = org['credentials']
-    for credential in credentials:
-      credentialname = credential['name']
-      credentialdesc = credential['description']
-      credentialtype = credential['credential_type']
-      credentialuser = credential['user_vault_path']
-      credentialkind = credential['kind']
-      key = "ansible.openknowit.com:credentials:orphan:" + credentialname
-      r.delete(key)
-      awx_create_credential( credentialname, credentialdesc, credentialtype, credentialuser, credentialkind, orgname)
-      loop = True
-      while (loop):
-        credid = awx_get_id("credentials", credentialname)
-        if ( credid != "" ):
-          loop = False
-  except:
-    prettyllog("config", "initialize", "credentials", orgname, "000",  "No credentioals found")
+  #try:
+   # credentials = org['credentials']
+   # for credential in credentials:
+    #  key = "ansible.openknowit.com:credentials:orphan:" + credential['name']
+    #  r.delete(key)
+      #awx_create_credential( credential, orgname)
+      #loop = True
+      #while (loop):
+      #  credid = awx_get_id("credentials", credential['name'])
+      #  if ( credid != "" ):
+      #    loop = False
+ # except:
+ #   prettyllog("config", "initialize", "credentials", orgname, "000",  "No credentioals found")
 
   ######################################
   # Projects
